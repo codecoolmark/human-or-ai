@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 
 @Service
-public class QuotesServices {
+public class QuotesService {
 
     private final QuotesRepository quotesRepository;
 
-    public QuotesServices(QuotesRepository newQuotesServices) {
+    public QuotesService(QuotesRepository newQuotesServices) {
         quotesRepository = newQuotesServices;
     }
 
