@@ -9,14 +9,24 @@ export default function RegisterPage() {
 
     const onRegister = async (login: LoginData) => {
         try {
-            const user = await fetch(`${API_BASE}/users`, {
+            const res = await fetch(`${API_BASE}/users`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(login),
-            }).then((res) => res.json());
+            });
 
+            if (!res.ok) {
+                const msg =
+                    res.status === 403
+                        ? "Email may already be registered"
+                        : res.status.toString();
+                setRegisterError(msg);
+                return;
+            }
+
+            const user = await res.json();
             setRegisteredUser(user);
         } catch (err: any) {
             console.error(err);
