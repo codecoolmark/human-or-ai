@@ -16,6 +16,6 @@ public class QuotesServices {
     }
 
     public Collection<Quote> getQuotes() {
-        return quotesRepository.filterAllQuotes();
+        return quotesRepository.findAll();
     }
 }
