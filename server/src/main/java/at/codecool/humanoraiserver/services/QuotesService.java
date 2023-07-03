@@ -8,7 +8,6 @@ import java.util.Collection;
 
 @Service
 public class QuotesService {
-
     private final QuotesRepository quotesRepository;
 
     public QuotesService(QuotesRepository newQuotesServices) {

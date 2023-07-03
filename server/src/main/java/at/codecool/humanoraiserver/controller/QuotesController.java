@@ -11,14 +11,14 @@ import java.util.List;
 @RestController
 public class QuotesController {
 
-    private final QuotesService services;
+    private final QuotesService service;
 
-    public QuotesController(QuotesService newServices) {
-        services = newServices;
+    public QuotesController(QuotesService newService) {
+        service = newService;
     }
 
     @GetMapping("/quotes")
     public Collection<Quote> quotes() {
-        return services.getQuotes();
+        return service.getQuotes();
     }
 }
