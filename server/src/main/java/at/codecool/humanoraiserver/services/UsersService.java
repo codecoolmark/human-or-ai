@@ -34,5 +34,20 @@ public class UsersService {
             return Optional.empty();
         }
     }
+
+    public Optional<User> loginUser(UserDTO data) {
+        final Optional<User> userOpt = usersRepository.findByEmail(data.getEmail());
+        if (userOpt.isEmpty()) {
+            return userOpt;
+        }
+
+        final User user = userOpt.get();
+
+        // TODO: password hashing stuff
+        if (user.getPasswordHash().equals(data.getPassword())) {
+            return Optional.of(user);
+        }
+
+        return Optional.empty();
     }
 }

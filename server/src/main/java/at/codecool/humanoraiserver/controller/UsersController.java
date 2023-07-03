@@ -36,5 +36,15 @@ public class UsersController {
 
         return userOpt;
     }
+
+    @PostMapping("/users/login")
+    public Optional<User> postUsersLogin(@RequestBody UserDTO user, HttpServletResponse response) {
+        final Optional<User> userOpt = usersService.loginUser(user);
+
+        if (userOpt.isEmpty()) {
+            response.setStatus(403);
+        }
+
+        return userOpt;
     }
 }
