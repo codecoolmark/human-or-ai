@@ -2,7 +2,7 @@ create table if not exists quote (id bigint primary key generated always as iden
 
 create table if not exists "users" (
     id bigint primary key generated always as identity,
-    "email" text,
+    "email" text unique,
     "nickname" text,
     "password_hash" text
 );

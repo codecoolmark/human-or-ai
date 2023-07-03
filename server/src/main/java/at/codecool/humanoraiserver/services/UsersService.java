@@ -3,6 +3,7 @@ package at.codecool.humanoraiserver.services;
 import java.util.Collection;
 import java.util.Optional;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import at.codecool.humanoraiserver.model.User;
@@ -25,8 +26,13 @@ public class UsersService {
         final User user = new User();
         user.setEmail(data.getEmail());
         user.setNickname(data.getNickname());
-        user.setPasswordHash(data.getPassword()); // TODO
+        user.setPasswordHash(data.getPassword()); // TODO: password hashing
 
-        return Optional.of(this.usersRepository.save(user));
+        try {
+            return Optional.of(this.usersRepository.save(user));
+        } catch (DataIntegrityViolationException err) {
+            return Optional.empty();
+        }
+    }
     }
 }
