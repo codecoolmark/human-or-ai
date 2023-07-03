@@ -43,6 +43,7 @@ export default function RegisterPage() {
                 onSubmit={onRegister}
                 confirmPassword
                 disabled={!!registeredUser}
+                submitLabel="Register"
             />
         </main>
     );

@@ -17,14 +17,18 @@ export interface LoginData {
 
 interface LoginFormProps {
     onSubmit?: (login: LoginData) => void;
+    omitNickname?: boolean;
     confirmPassword?: boolean;
     disabled?: boolean;
+    submitLabel?: string;
 }
 
 export default function LoginForm({
     onSubmit: onSubmitProp,
+    omitNickname,
     confirmPassword,
     disabled,
+    submitLabel,
 }: LoginFormProps) {
     const [email, setEmail] = useState("");
     const [nickname, setNickname] = useState("");
@@ -45,7 +49,7 @@ export default function LoginForm({
                     ? null
                     : "Must be valid email format",
             nickname:
-                !nickname.length || RE_NICKNAME.test(nickname)
+                omitNickname || !nickname.length || RE_NICKNAME.test(nickname)
                     ? null
                     : "Nickname must be at least 2 characters long",
             password:
@@ -67,10 +71,14 @@ export default function LoginForm({
         password,
         passwordConfirm,
         confirmPassword,
+        omitNickname,
     ]);
 
     const isValid =
-        [email, nickname, password].every((v) => v.length > 0) &&
+        email.length > 0 &&
+        (omitNickname ? true : nickname.length > 0) &&
+        password.length > 0 &&
+        (confirmPassword ? passwordConfirm.length > 0 : true) &&
         Object.values(errors).every((v) => !v);
 
     const onSubmit = (event: React.FormEvent) => {
@@ -94,18 +102,20 @@ export default function LoginForm({
                 {errors.email && <span className="error">{errors.email}</span>}
             </label>
 
-            <label>
-                Nickname
-                <input
-                    type="text"
-                    value={nickname}
-                    onChange={(e) => setNickname(e.target.value)}
-                    disabled={disabled}
-                />
-                {errors.nickname && (
-                    <span className="error">{errors.nickname}</span>
-                )}
-            </label>
+            {!omitNickname && (
+                <label>
+                    Nickname
+                    <input
+                        type="text"
+                        value={nickname}
+                        onChange={(e) => setNickname(e.target.value)}
+                        disabled={disabled}
+                    />
+                    {errors.nickname && (
+                        <span className="error">{errors.nickname}</span>
+                    )}
+                </label>
+            )}
 
             <label>
                 Password
@@ -136,7 +146,7 @@ export default function LoginForm({
             )}
 
             <button type="submit" disabled={disabled || !isValid}>
-                Register
+                {submitLabel || "Register"}
             </button>
         </form>
     );
