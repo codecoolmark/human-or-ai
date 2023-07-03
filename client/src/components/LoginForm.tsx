@@ -18,11 +18,13 @@ export interface LoginData {
 interface LoginFormProps {
     onSubmit?: (login: LoginData) => void;
     confirmPassword?: boolean;
+    disabled?: boolean;
 }
 
 export default function LoginForm({
     onSubmit: onSubmitProp,
     confirmPassword,
+    disabled,
 }: LoginFormProps) {
     const [email, setEmail] = useState("");
     const [nickname, setNickname] = useState("");
@@ -87,6 +89,7 @@ export default function LoginForm({
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    disabled={disabled}
                 />
                 {errors.email && <span className="error">{errors.email}</span>}
             </label>
@@ -97,6 +100,7 @@ export default function LoginForm({
                     type="text"
                     value={nickname}
                     onChange={(e) => setNickname(e.target.value)}
+                    disabled={disabled}
                 />
                 {errors.nickname && (
                     <span className="error">{errors.nickname}</span>
@@ -109,6 +113,7 @@ export default function LoginForm({
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    disabled={disabled}
                 />
                 {errors.password && (
                     <span className="error">{errors.password}</span>
@@ -122,6 +127,7 @@ export default function LoginForm({
                         type="password"
                         value={passwordConfirm}
                         onChange={(e) => setPasswordConfirm(e.target.value)}
+                        disabled={disabled}
                     />
                     {errors.passwordConfirm && (
                         <span className="error">{errors.passwordConfirm}</span>
@@ -129,7 +135,7 @@ export default function LoginForm({
                 </label>
             )}
 
-            <button type="submit" disabled={!isValid}>
+            <button type="submit" disabled={disabled || !isValid}>
                 Register
             </button>
         </form>

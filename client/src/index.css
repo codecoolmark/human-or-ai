@@ -13,6 +13,10 @@ form > label {
     flex-direction: column;
 }
 
-form > label > .error {
+.error {
     color: red;
+}
+
+.success {
+    color: green;
 }
