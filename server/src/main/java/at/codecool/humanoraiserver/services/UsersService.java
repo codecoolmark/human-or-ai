@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import at.codecool.humanoraiserver.model.User;
@@ -49,7 +50,7 @@ public class UsersService {
 
         final User user = userOpt.get();
 
-        final boolean isValidPassword = passwordEncoder.isMatch(
+        final boolean isValidPassword = passwordEncoder.matches(
                 data.getPassword(),
                 user.getPasswordHash());
         if (isValidPassword) {
