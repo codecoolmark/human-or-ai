@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { getQuotes } from "../../api";
 import { useEffect, useState } from "react";
 
@@ -27,7 +28,7 @@ export default function QuotesPage() {
                         </tr>
                     </thead>
                     <tbody>
-                    {quotes.map(quote => <tr>
+                    {quotes.map((quote, index) => <tr key={index}>
                         <td>{quote.text}</td>
                         <td>{quote.real ? "Human" : "AI"}</td>
                         <td>{formatDateTime(quote.expires)}</td>
@@ -35,6 +36,7 @@ export default function QuotesPage() {
                     </tbody>
                 </table>
             </figure>
+            <Link to="/quotes/new">Create new</Link>
         </main>
     );
 }

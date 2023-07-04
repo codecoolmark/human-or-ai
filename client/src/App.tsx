@@ -3,6 +3,7 @@ import LandingPage from "./pages/Landing";
 import QuotesPage from "./pages/Quotes";
 import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register";
+import NewQuote from "./pages/NewQuote";
 
 export default function App() {
     return (
@@ -13,6 +14,7 @@ export default function App() {
                     <Route path="/register" Component={RegisterPage} />
                     <Route path="/login" Component={LoginPage} />
                     <Route path="/quotes" Component={QuotesPage} />
+                    <Route path="/quotes/new" Component={NewQuote} />
                 </Routes>
             </BrowserRouter>
         </>
