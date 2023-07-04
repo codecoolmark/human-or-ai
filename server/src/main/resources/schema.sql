@@ -1,1 +1,0 @@
-create table if not exists quote (id bigint primary key generated always as identity, "text" text)
