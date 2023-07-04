@@ -38,7 +38,7 @@ export default function LoginForm({
     });
 
     const validateLogin = () => {
-        setErrors((errors) => ({
+        setErrors(() => ({
             email:
                 !email.length || RE_EMAIL.test(email)
                     ? null

@@ -11,6 +11,13 @@ export interface LoginData {
     password: string;
 }
 
+export interface Quote {
+    id: number;
+    text: string;
+    isReal: boolean;
+    expires: string;
+}
+
 export type Result<T> =
     | {
           isOk: true;

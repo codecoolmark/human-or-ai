@@ -7,6 +7,8 @@ import jakarta.persistence.Id;
 
 import java.time.Instant;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 public final class Quote {
 
@@ -35,6 +37,7 @@ public final class Quote {
         text = newText;
     }
 
+    @JsonProperty(value = "isReal")
     public boolean isReal() {
         return isReal;
     }

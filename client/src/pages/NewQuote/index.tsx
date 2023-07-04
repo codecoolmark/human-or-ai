@@ -1,43 +1,64 @@
-import { useState } from "react"
+import { useState } from "react";
 import { createQuote } from "../../api";
 import { useNavigate } from "react-router";
 
-function toISO(dateTime: string | null): string | null {
-    if (dateTime) {
-        const date = new Date(dateTime);
-        return date.toISOString();
-    }
-    return null;
+function toISO(dateTime: string): string {
+    const date = new Date(dateTime);
+    return date.toISOString();
 }
 
 export default function NewQuote() {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
-    const [text, setText] = useState(null);
-    const [real, setReal] = useState(false);
-    const [expires, setExpires] = useState(null);
+    const [text, setText] = useState<string | null>(null);
+    const [isReal, setReal] = useState(false);
+    const [expires, setExpires] = useState<string | null>(null);
 
-    const onSubmit = (event) => {
+    const onSubmit = (event: React.FormEvent) => {
         event.preventDefault();
 
-        createQuote({
-            text, real, expires: toISO(expires)
-        }).then(() => navigate("/quotes"));
-    }
+        if (!text || !expires) {
+            return;
+        }
 
-    return <main>
-        <h1>Add a new quote</h1>
-        <form onSubmit={onSubmit}>
-            <label>
-                Text <input type="text" maxLength={1024} onChange={event => setText(event.target.value)} />
-            </label>
-            <label>
-                Human <input type="checkbox" onChange={event => setReal(event.target.value === "on")}/>
-            </label>
-            <label>
-                Expires <input type="datetime-local" onChange={event => setExpires(event.target.value)} />
-            </label>
-            <button type="submit">Create new quote</button>
-        </form>
-    </main>
+        createQuote({
+            text,
+            isReal,
+            expires: toISO(expires),
+        }).then(() => navigate("/quotes"));
+    };
+
+    return (
+        <main>
+            <h1>Add a new quote</h1>
+            <form onSubmit={onSubmit}>
+                <label>
+                    Text{" "}
+                    <input
+                        type="text"
+                        maxLength={1024}
+                        onChange={(event) => setText(event.target.value)}
+                    />
+                </label>
+                <label>
+                    Human{" "}
+                    <input
+                        type="checkbox"
+                        onChange={(event) =>
+                            setReal(event.target.value === "on")
+                        }
+                    />
+                </label>
+                <label>
+                    Expires{" "}
+                    <input
+                        type="datetime-local"
+                        onChange={(event) => setExpires(event.target.value)}
+                    />
+                </label>
+                <button type="submit">Create new quote</button>
+            </form>
+        </main>
+    );
 }
+
