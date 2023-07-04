@@ -18,7 +18,7 @@ export default function RegisterPage() {
             }).then((res) => res.json());
 
             setRegisteredUser(user);
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
             setRegisterError(err?.message || JSON.stringify(err));
         }
