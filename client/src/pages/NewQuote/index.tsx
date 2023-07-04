@@ -22,9 +22,7 @@ export default function NewQuote() {
 
         createQuote({
             text, real, expires: toISO(expires)
-        });
-
-        navigate("/quotes");
+        }).then(() => navigate("/quotes"));
     }
 
     return <main>
