@@ -17,4 +17,9 @@ public class QuotesService {
     public Collection<Quote> getQuotes() {
         return quotesRepository.findAll();
     }
+
+    public Quote createQuote(Quote newQuote) {
+        quotesRepository.save(newQuote);
+        return newQuote;
+    }
 }
