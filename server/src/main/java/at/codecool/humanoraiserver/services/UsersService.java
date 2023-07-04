@@ -13,9 +13,13 @@ import at.codecool.humanoraiserver.repositories.UsersRepository;
 @Service
 public class UsersService {
     private final UsersRepository usersRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsersService(UsersRepository usersRepository) {
+    public UsersService(
+            UsersRepository usersRepository,
+            PasswordEncoder passwordEncoder) {
         this.usersRepository = usersRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Collection<User> getUsers() {
@@ -26,7 +30,9 @@ public class UsersService {
         final User user = new User();
         user.setEmail(data.getEmail());
         user.setNickname(data.getNickname());
-        user.setPasswordHash(data.getPassword()); // TODO: password hashing
+
+        final String hash = passwordEncoder.encode(data.getPassword());
+        user.setPasswordHash(hash);
 
         try {
             return Optional.of(this.usersRepository.save(user));
@@ -43,8 +49,10 @@ public class UsersService {
 
         final User user = userOpt.get();
 
-        // TODO: password hashing stuff
-        if (user.getPasswordHash().equals(data.getPassword())) {
+        final boolean isValidPassword = passwordEncoder.isMatch(
+                data.getPassword(),
+                user.getPasswordHash());
+        if (isValidPassword) {
             return Optional.of(user);
         }
 
