@@ -1,10 +1,16 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { shallow } from "zustand/shallow";
 import { loginUser } from "../../api";
 import LoginForm from "../../components/LoginForm";
-import { LoginData, UserData } from "../../types";
+import { useStore } from "../../store";
+import { LoginData } from "../../types";
 
 export default function LoginPage() {
-    const [user, setUser] = useState<UserData | null>(null);
+    const [user, setUser] = useStore(
+        (state) => [state.user, state.setUser],
+        shallow,
+    );
     const [error, setError] = useState<string | null>(null);
 
     const onLogin = async (login: LoginData) => {
