@@ -2,46 +2,42 @@ import { LoginData, UserData } from "./types";
 
 const server = new URL(import.meta.env.VITE_SERVER_URL);
 
-export async function registerUser(login: LoginData): Promise<UserData> {
-    const res = await fetch(new URL("/users", server), {
-        method: "POST",
+function fetchJson(endpoint: string, options = {}) {
+    return fetch(new URL(endpoint, server), {
+        method: "GET",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(login),
+        ...options
+    }).then(response => {
+        if (response.ok) {
+            return response.json()
+        }
+        throw new Error();
     });
+}
 
-    if (!res.ok) {
-        const msg =
-            res.status === 403
-                ? "Email may already be registered"
-                : res.status.toString();
-        throw new Error(msg);
-    }
-
-    return await res.json();
+export async function registerUser(login: LoginData): Promise<UserData> {
+    return fetchJson("/users", {
+        method: "POST",
+        body: JSON.stringify(login)
+    })
 }
 
 export async function loginUser(login: LoginData): Promise<UserData> {
-    const res = await fetch(new URL("/users/login", server), {
+    return fetchJson("/users/login", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(login),
-    });
-
-    if (!res.ok) {
-        const msg =
-            res.status === 403 ? "Invalid login data" : res.status.toString();
-        throw new Error(msg);
-    }
-
-    return await res.json();
+        body: JSON.stringify(login)
+    })
 }
 
 export function getQuotes() {
-    return fetch(new URL("/quotes", server)).then((response) =>
-        response.json(),
-    );
+    return fetchJson("/quotes")
+}
+
+export function createQuote(quote) {
+    return fetchJson("/quotes", { 
+        method: "POST",
+        body: JSON.stringify(quote)
+     })
 }

@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface QuotesRepository extends CrudRepository<Quote, Long> {
     Collection<Quote> findAll();
+    Quote save(Quote newQuote);
 }

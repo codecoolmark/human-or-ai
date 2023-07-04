@@ -1,5 +1,12 @@
+import { Link } from "react-router-dom";
 import { getQuotes } from "../../api";
 import { useEffect, useState } from "react";
+
+function formatDateTime(instant: string) {
+    return new Intl.DateTimeFormat(navigator.language, {
+        dateStyle: "full", timeStyle: "medium"
+    }).format(new Date(instant));
+}
 
 export default function QuotesPage() {
     const [quotes, setQuotes] = useState([]);
@@ -11,11 +18,25 @@ export default function QuotesPage() {
     return (
         <main>
             <h1>Quotes</h1>
-            <ul>
-                {quotes.map((quote) => (
-                    <li>{quote.text}</li>
-                ))}
-            </ul>
+            <figure>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Quote</th>
+                            <th>Human or AI</th>
+                            <th>Expires</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {quotes.map((quote, index) => <tr key={index}>
+                        <td>{quote.text}</td>
+                        <td>{quote.real ? "Human" : "AI"}</td>
+                        <td>{formatDateTime(quote.expires)}</td>
+                    </tr>)}
+                    </tbody>
+                </table>
+            </figure>
+            <Link to="/quotes/new">Create new</Link>
         </main>
     );
 }
