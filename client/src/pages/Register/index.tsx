@@ -10,7 +10,11 @@ export default function RegisterPage() {
     const onRegister = async (login: LoginData) => {
         try {
             const user = await registerUser(login);
-            setRegisteredUser(user);
+            if (user.isOk) {
+                setRegisteredUser(user.value);
+            } else {
+                setRegisterError(user.error);
+            }
         } catch (err: any) {
             console.error(err);
             setRegisterError(err?.message || JSON.stringify(err));

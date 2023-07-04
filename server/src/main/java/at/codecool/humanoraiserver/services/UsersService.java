@@ -7,6 +7,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import at.codecool.humanoraiserver.Result;
 import at.codecool.humanoraiserver.model.User;
 import at.codecool.humanoraiserver.model.UserDTO;
 import at.codecool.humanoraiserver.repositories.UsersRepository;
@@ -27,7 +28,7 @@ public class UsersService {
         return usersRepository.findAll();
     }
 
-    public Optional<User> registerUser(UserDTO data) {
+    public Result<User> registerUser(UserDTO data) {
         final User user = new User();
         user.setEmail(data.getEmail());
         user.setNickname(data.getNickname());
@@ -36,16 +37,16 @@ public class UsersService {
         user.setPasswordHash(hash);
 
         try {
-            return Optional.of(this.usersRepository.save(user));
+            return Result.of(this.usersRepository.save(user));
         } catch (DataIntegrityViolationException err) {
-            return Optional.empty();
+            return Result.error("Failed to save new user; user email may exist already");
         }
     }
 
-    public Optional<User> loginUser(UserDTO data) {
+    public Result<User> loginUser(UserDTO data) {
         final Optional<User> userOpt = usersRepository.findByEmail(data.getEmail());
         if (userOpt.isEmpty()) {
-            return userOpt;
+            return Result.error("Invalid login");
         }
 
         final User user = userOpt.get();
@@ -53,10 +54,10 @@ public class UsersService {
         final boolean isValidPassword = passwordEncoder.matches(
                 data.getPassword(),
                 user.getPasswordHash());
-        if (isValidPassword) {
-            return Optional.of(user);
+        if (!isValidPassword) {
+            return Result.error("Invalid login");
         }
 
-        return Optional.empty();
+        return Result.of(user);
     }
 }

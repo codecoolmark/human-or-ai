@@ -10,3 +10,15 @@ export interface LoginData {
     nickname: string;
     password: string;
 }
+
+export type Result<T> =
+    | {
+          isOk: true;
+          value: T;
+          error: null;
+      }
+    | {
+          isOk: false;
+          value: null;
+          error: string;
+      };

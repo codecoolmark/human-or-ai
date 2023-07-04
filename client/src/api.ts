@@ -1,4 +1,4 @@
-import { LoginData, UserData } from "./types";
+import { LoginData, Result, UserData } from "./types";
 
 const server = new URL(import.meta.env.VITE_SERVER_URL);
 
@@ -8,36 +8,38 @@ function fetchJson(endpoint: string, options = {}) {
         headers: {
             "Content-Type": "application/json",
         },
-        ...options
-    }).then(response => {
+        ...options,
+    }).then((response) => {
         if (response.ok) {
-            return response.json()
+            return response.json();
         }
-        throw new Error();
+        throw new Error("Something went wrong");
     });
 }
 
-export async function registerUser(login: LoginData): Promise<UserData> {
+export async function registerUser(
+    login: LoginData,
+): Promise<Result<UserData>> {
     return fetchJson("/users", {
         method: "POST",
-        body: JSON.stringify(login)
-    })
+        body: JSON.stringify(login),
+    });
 }
 
-export async function loginUser(login: LoginData): Promise<UserData> {
+export async function loginUser(login: LoginData): Promise<Result<UserData>> {
     return fetchJson("/users/login", {
         method: "POST",
-        body: JSON.stringify(login)
-    })
+        body: JSON.stringify(login),
+    });
 }
 
 export function getQuotes() {
-    return fetchJson("/quotes")
+    return fetchJson("/quotes");
 }
 
 export function createQuote(quote) {
-    return fetchJson("/quotes", { 
+    return fetchJson("/quotes", {
         method: "POST",
-        body: JSON.stringify(quote)
-     })
+        body: JSON.stringify(quote),
+    });
 }

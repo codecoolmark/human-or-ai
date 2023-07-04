@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import at.codecool.humanoraiserver.Result;
 import at.codecool.humanoraiserver.model.User;
 import at.codecool.humanoraiserver.model.UserDTO;
 import at.codecool.humanoraiserver.services.UsersService;
@@ -27,24 +28,24 @@ public class UsersController {
     }
 
     @PostMapping("/users")
-    public Optional<User> postUsers(@RequestBody UserDTO user, HttpServletResponse response) {
-        final Optional<User> userOpt = usersService.registerUser(user);
+    public Result<User> postUsers(@RequestBody UserDTO userData, HttpServletResponse response) {
+        final Result<User> user = usersService.registerUser(userData);
 
-        if (userOpt.isEmpty()) {
-            response.setStatus(403);
-        }
+        // if (user.isError()) {
+        // response.setStatus(403);
+        // }
 
-        return userOpt;
+        return user;
     }
 
     @PostMapping("/users/login")
-    public Optional<User> postUsersLogin(@RequestBody UserDTO user, HttpServletResponse response) {
-        final Optional<User> userOpt = usersService.loginUser(user);
+    public Result<User> postUsersLogin(@RequestBody UserDTO userData, HttpServletResponse response) {
+        final Result<User> user = usersService.loginUser(userData);
 
-        if (userOpt.isEmpty()) {
-            response.setStatus(403);
-        }
+        // if (user.isEmpty()) {
+        // response.setStatus(403);
+        // }
 
-        return userOpt;
+        return user;
     }
 }
