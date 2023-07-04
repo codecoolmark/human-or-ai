@@ -20,3 +20,9 @@ form > label {
 .success {
     color: green;
 }
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}

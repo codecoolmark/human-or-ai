@@ -4,11 +4,13 @@ import QuotesPage from "./pages/Quotes";
 import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register";
 import NewQuote from "./pages/NewQuote";
+import Navigation from "./components/Navigation";
 
 export default function App() {
     return (
         <>
             <BrowserRouter basename="/">
+                <Navigation />
                 <Routes>
                     <Route path="/" Component={LandingPage} />
                     <Route path="/register" Component={RegisterPage} />
