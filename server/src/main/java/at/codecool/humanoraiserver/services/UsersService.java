@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import at.codecool.humanoraiserver.model.User;
+import at.codecool.humanoraiserver.model.UserDTO;
 import at.codecool.humanoraiserver.repositories.UsersRepository;
 
 @Service
@@ -17,14 +18,15 @@ public class UsersService {
     }
 
     public Collection<User> getUsers() {
-        return usersRepository.getUsers();
+        return usersRepository.findAll();
     }
 
-    public Optional<User> registerUser(String email, String nickname, String password) {
-        // TODO
-        final String passwordHash = password;
-        final User user = new User(email, nickname, passwordHash);
+    public Optional<User> registerUser(UserDTO data) {
+        final User user = new User();
+        user.setEmail(data.getEmail());
+        user.setNickname(data.getNickname());
+        user.setPasswordHash(data.getPassword()); // TODO
 
-        return Optional.of(this.usersRepository.saveUser(user));
+        return Optional.of(this.usersRepository.save(user));
     }
 }

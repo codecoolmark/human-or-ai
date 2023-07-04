@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import at.codecool.humanoraiserver.model.User;
+import at.codecool.humanoraiserver.model.UserDTO;
 import at.codecool.humanoraiserver.services.UsersService;
 
 @RestController
@@ -20,13 +21,12 @@ public class UsersController {
     }
 
     @GetMapping("/users")
-    public Collection<User> users() {
+    public Collection<User> getUsers() {
         return usersService.getUsers();
     }
 
-    // TODO
     @PostMapping("/users")
-    public Optional<User> createUser(@RequestBody User user) {
-        return usersService.registerUser(user.email(), user.nickname(), user.passwordHash());
+    public Optional<User> postUsers(@RequestBody UserDTO user) {
+        return usersService.registerUser(user);
     }
 }
