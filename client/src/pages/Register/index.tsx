@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { API_BASE } from "../../api";
-import LoginForm, { LoginData } from "../../components/LoginForm";
-import { UserData } from "../../types";
+import { registerUser } from "../../api";
+import LoginForm from "../../components/LoginForm";
+import { LoginData, UserData } from "../../types";
 
 export default function RegisterPage() {
     const [registerError, setRegisterError] = useState<string | null>(null);
@@ -9,24 +9,7 @@ export default function RegisterPage() {
 
     const onRegister = async (login: LoginData) => {
         try {
-            const res = await fetch(`${API_BASE}/users`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(login),
-            });
-
-            if (!res.ok) {
-                const msg =
-                    res.status === 403
-                        ? "Email may already be registered"
-                        : res.status.toString();
-                setRegisterError(msg);
-                return;
-            }
-
-            const user = await res.json();
+            const user = await registerUser(login);
             setRegisteredUser(user);
         } catch (err: any) {
             console.error(err);

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { API_BASE } from "../../api";
-import LoginForm, { LoginData } from "../../components/LoginForm";
-import { UserData } from "../../types";
+import { loginUser } from "../../api";
+import LoginForm from "../../components/LoginForm";
+import { LoginData, UserData } from "../../types";
 
 export default function LoginPage() {
     const [user, setUser] = useState<UserData | null>(null);
@@ -9,24 +9,7 @@ export default function LoginPage() {
 
     const onLogin = async (login: LoginData) => {
         try {
-            const res = await fetch(`${API_BASE}/users/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(login),
-            });
-
-            if (!res.ok) {
-                const msg =
-                    res.status === 403
-                        ? "Invalid login data"
-                        : res.status.toString();
-                setError(msg);
-                return;
-            }
-
-            const user = await res.json();
+            const user = await loginUser(login);
             setUser(user);
         } catch (err: any) {
             console.error(err);

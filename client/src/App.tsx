@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LandingPage from "./pages/Landing";
-import QuotesPage from "./pages/quotes";
+import QuotesPage from "./pages/Quotes";
 import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register";
 

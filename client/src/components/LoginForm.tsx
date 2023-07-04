@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { LoginData } from "../types";
 
 // https://emailregex.com/
 const RE_EMAIL =
@@ -8,12 +9,6 @@ const RE_NICKNAME = /^.*(?=.{2,}).*$/;
 
 const RE_PASSWORD =
     /^[a-zA-Z0-9!?.,;:\-_]*(?=.{6,})(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!?.,;:\-_])[a-zA-Z0-9!?.,;:\-_]*$/;
-
-export interface LoginData {
-    email: string;
-    nickname: string;
-    password: string;
-}
 
 interface LoginFormProps {
     onSubmit?: (login: LoginData) => void;
