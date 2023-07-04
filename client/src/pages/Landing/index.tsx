@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function LandingPage() {
     return (
         <main>
@@ -7,8 +9,8 @@ export default function LandingPage() {
                 AI-generated?
             </p>
             <p>
-                <a href="/register">Register</a> your user account or{" "}
-                <a href="/login">login</a> to get started.
+                <Link to="/register">Register</Link> your user account or{" "}
+                <Link to="/login">login</Link> to get started.
             </p>
         </main>
     );
