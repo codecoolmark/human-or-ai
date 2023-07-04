@@ -1,18 +1,18 @@
-import { getQuotes} from "../../Api.tsx";
-import {useEffect, useState} from "react";
+import { getQuotes } from "../../api";
+import { useEffect, useState } from "react";
 
-function formateDateTime(instant: string) {
+function formatDateTime(instant: string) {
     return new Intl.DateTimeFormat(navigator.language, {
         dateStyle: "full", timeStyle: "medium"
-    }).format(new Date(instant))
+    }).format(new Date(instant));
 }
 
-export default function Quotes() {
-    const [quotes, setQuotes] = useState([])
+export default function QuotesPage() {
+    const [quotes, setQuotes] = useState([]);
 
     useEffect(() => {
-        getQuotes().then(quotes => setQuotes(quotes))
-    }, [])
+        getQuotes().then((quotes) => setQuotes(quotes));
+    }, []);
 
     return (
         <main>
@@ -30,7 +30,7 @@ export default function Quotes() {
                     {quotes.map(quote => <tr>
                         <td>{quote.text}</td>
                         <td>{quote.real ? "Human" : "AI"}</td>
-                        <td>{formateDateTime(quote.expires)}</td>
+                        <td>{formatDateTime(quote.expires)}</td>
                     </tr>)}
                     </tbody>
                 </table>
@@ -38,3 +38,4 @@ export default function Quotes() {
         </main>
     );
 }
+

@@ -1,6 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LandingPage from "./pages/Landing";
-import Quotes from "./pages/quotes";
+import QuotesPage from "./pages/Quotes";
+import LoginPage from "./pages/Login";
+import RegisterPage from "./pages/Register";
 
 export default function App() {
     return (
@@ -8,7 +10,9 @@ export default function App() {
             <BrowserRouter basename="/">
                 <Routes>
                     <Route path="/" Component={LandingPage} />
-                    <Route path="/quotes" Component={Quotes} />
+                    <Route path="/register" Component={RegisterPage} />
+                    <Route path="/login" Component={LoginPage} />
+                    <Route path="/quotes" Component={QuotesPage} />
                 </Routes>
             </BrowserRouter>
         </>
