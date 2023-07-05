@@ -18,6 +18,13 @@ export interface Quote {
     expires: string;
 }
 
+export interface Vote {
+    id: number;
+    quoteId: number;
+    isReal: boolean;
+    created: string;
+}
+
 export type Result<T> =
     | {
           isOk: true;

@@ -7,6 +7,8 @@ import jakarta.persistence.Id;
 
 import java.time.Instant;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 public class Vote {
 
@@ -42,7 +44,8 @@ public class Vote {
         this.id = id;
     }
 
-    public Boolean getReal() {
+    @JsonProperty(value = "isReal")
+    public boolean getReal() {
         return isReal;
     }
 

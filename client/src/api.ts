@@ -1,4 +1,4 @@
-import { LoginData, Quote, Result, UserData } from "./types";
+import { LoginData, Quote, Result, UserData, Vote } from "./types";
 
 const server = new URL(import.meta.env.VITE_SERVER_URL);
 
@@ -59,13 +59,20 @@ export function getQuotes(): Promise<Quote[]> {
     return fetchJson("/quotes");
 }
 
-export function createQuote(quote: Omit<Quote, "id">) {
+export function createQuote(quote: Omit<Quote, "id">): Promise<Quote> {
     return fetchJson("/quotes", {
         method: "POST",
         body: JSON.stringify(quote),
     });
 }
 
-export function getVotes() {
+export function getVotes(): Promise<Vote[]> {
     return fetchJson("/votes");
+}
+
+export function createVote(vote: Omit<Vote, "id" | "created">): Promise<Vote> {
+    return fetchJson("/votes", {
+        method: "POST",
+        body: JSON.stringify(vote),
+    });
 }
