@@ -8,7 +8,7 @@ export default function Navigation() {
 
     const onLogout = () => {
         clearUser();
-        logoutUser().then(console.log);
+        logoutUser();
     };
 
     return (
@@ -20,6 +20,7 @@ export default function Navigation() {
                     <Link to="/quotes">Quotes</Link>
                     <Link to="/quotes/new">New Quote</Link>
                     <button onClick={onLogout}>Logout</button>
+                    <div>{user.nickname}</div>
                 </>
             ) : (
                 <>

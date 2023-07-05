@@ -25,7 +25,6 @@ function fetchVoid(endpoint: string, options: RequestInit = {}) {
         credentials: "include",
         ...options,
     }).then((res) => {
-        console.log(res);
         if (res.ok) return;
         console.error(res);
         throw new Error("Something went wrong");
