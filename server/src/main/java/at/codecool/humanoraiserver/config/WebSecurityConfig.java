@@ -32,8 +32,12 @@ public class WebSecurityConfig {
         return httpSecurity.cors(withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authenticationManager(authenticationManager)
-                .authorizeHttpRequests(requests -> requests.requestMatchers("/users/login", "/users/register")
-                        .permitAll().anyRequest().authenticated())
+                .authorizeHttpRequests(
+                    requests -> requests.requestMatchers(
+                        "/users/login",
+                        "/users/register",
+                        "/users/current")
+                    .permitAll().anyRequest().authenticated())
                 .rememberMe(remember -> remember.rememberMeServices(rememberMeServices))
                 .build();
     }

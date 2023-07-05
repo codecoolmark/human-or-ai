@@ -55,4 +55,8 @@ public class UsersService implements UserDetailsService {
                 .map(UserDetailsImpl::new)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found!"));
     }
+
+    public User findUserById(Long id) {
+        return usersRepository.findById(id).orElseThrow();
+    }
 }

@@ -1,21 +1,26 @@
 package at.codecool.humanoraiserver.controller;
 
 import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Stream;
 
-import at.codecool.humanoraiserver.config.Tokens;
-import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.WebUtils;
 
 import at.codecool.humanoraiserver.Result;
+import at.codecool.humanoraiserver.config.Tokens;
 import at.codecool.humanoraiserver.model.User;
 import at.codecool.humanoraiserver.model.UserDTO;
 import at.codecool.humanoraiserver.services.UsersService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
@@ -61,5 +66,21 @@ public class UsersController {
         authCookie.setPath("/");
         response.addCookie(authCookie);
         return user;
+    }
+
+    @GetMapping("/users/current")
+    public Optional<User> usersCurrent(HttpServletRequest request) {
+        Cookie authCookie = WebUtils.getCookie(request, this.authCookieName);
+        if (authCookie == null) {
+            return Optional.empty();
+        }
+
+        Optional<Long> userIdOpt = this.tokens.validateToken(authCookie.getValue());
+        if (userIdOpt.isEmpty()) {
+            return Optional.empty();
+        }
+
+        User user = this.usersService.findUserById(userIdOpt.get());
+        return Optional.of(user);
     }
 }
