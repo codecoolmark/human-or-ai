@@ -14,6 +14,7 @@ function fetchJson(endpoint: string, options = {}) {
         if (response.ok) {
             return response.json();
         }
+        console.error(response);
         throw new Error("Something went wrong");
     });
 }
@@ -21,13 +22,13 @@ function fetchJson(endpoint: string, options = {}) {
 export async function registerUser(
     login: LoginData,
 ): Promise<Result<UserData>> {
-    return fetchJson("/users", {
+    return fetchJson("/users/register", {
         method: "POST",
         body: JSON.stringify(login),
     });
 }
 
-export async function loginUser(login: LoginData): Promise<Result<UserData>> {
+export async function loginUser(login: LoginData): Promise<UserData> {
     return fetchJson("/users/login", {
         method: "POST",
         body: JSON.stringify(login),

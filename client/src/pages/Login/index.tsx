@@ -15,11 +15,7 @@ export default function LoginPage() {
     const onLogin = async (login: LoginData) => {
         try {
             const user = await loginUser(login);
-            if (user.isOk) {
-                setUser(user.value);
-            } else {
-                setError(user.error);
-            }
+            setUser(user);
         } catch (err: any) {
             console.error(err);
             setError(err?.message || JSON.stringify(err));
