@@ -41,7 +41,7 @@ public class UsersController {
         return usersService.getUsers();
     }
 
-    @PostMapping("/users")
+    @PostMapping("/users/register")
     public Result<User> postUsers(@RequestBody UserDTO userData, HttpServletResponse response) {
         final Result<User> user = usersService.registerUser(userData);
 

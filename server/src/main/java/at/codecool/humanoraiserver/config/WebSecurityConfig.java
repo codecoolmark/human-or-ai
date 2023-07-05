@@ -45,7 +45,8 @@ public class WebSecurityConfig {
         return provider;
     }
 
-    @Bean AuthenticationManager authenticationManager(DaoAuthenticationProvider daoAuthenticationProvider,
+    @Bean
+    AuthenticationManager authenticationManager(DaoAuthenticationProvider daoAuthenticationProvider,
                                                       JwtAuthenticationProvider jwtAuthenticationProvider) {
         return new ProviderManager(daoAuthenticationProvider, jwtAuthenticationProvider);
     }
