@@ -2,9 +2,10 @@ import { Link } from "react-router-dom";
 import { getQuotes } from "../../api";
 import { useEffect, useState } from "react";
 import { formatDateTime } from "../../formatters";
+import { Quote } from "../../types";
 
 export default function QuotesPage() {
-    const [quotes, setQuotes] = useState([]);
+    const [quotes, setQuotes] = useState<Quote[]>([]);
 
     useEffect(() => {
         getQuotes().then((quotes) => setQuotes(quotes));
@@ -23,11 +24,13 @@ export default function QuotesPage() {
                         </tr>
                     </thead>
                     <tbody>
-                    {quotes.map((quote, index) => <tr key={index}>
-                        <td>{quote.text}</td>
-                        <td>{quote.real ? "Human" : "AI"}</td>
-                        <td>{formatDateTime(quote.expires)}</td>
-                    </tr>)}
+                        {quotes.map((quote, index) => (
+                            <tr key={index}>
+                                <td>{quote.text}</td>
+                                <td>{quote.isReal ? "Human" : "AI"}</td>
+                                <td>{formatDateTime(quote.expires)}</td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
             </figure>
@@ -35,4 +38,3 @@ export default function QuotesPage() {
         </main>
     );
 }
-
