@@ -2,6 +2,9 @@ package at.codecool.humanoraiserver.controller;
 
 import java.util.Collection;
 
+import at.codecool.humanoraiserver.config.Tokens;
+import jakarta.servlet.http.Cookie;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,11 +22,18 @@ import jakarta.servlet.http.HttpServletResponse;
 public class UsersController {
     private final UsersService usersService;
 
+    private final Tokens tokens;
+
     private final AuthenticationManager authenticationManager;
 
-    public UsersController(UsersService usersService, AuthenticationManager authenticationManager) {
+    private final String authCookieName;
+
+    public UsersController(UsersService usersService, AuthenticationManager authenticationManager, Tokens tokens,
+                           @Value("${cookies.authcookie.name}") String authCookieName) {
         this.usersService = usersService;
         this.authenticationManager = authenticationManager;
+        this.tokens = tokens;
+        this.authCookieName = authCookieName;
     }
 
     @GetMapping("/users")
@@ -43,9 +53,12 @@ public class UsersController {
     }
 
     @PostMapping("/users/login")
-    public User postUsersLogin(@RequestBody UserDTO userData) {
+    public User postUsersLogin(@RequestBody UserDTO userData, HttpServletResponse response) {
         var token = new UsernamePasswordAuthenticationToken(userData.getEmail(), userData.getPassword());
         this.authenticationManager.authenticate(token);
-        return usersService.findUserByEmail(userData.getEmail());
+        var user = usersService.findUserByEmail(userData.getEmail());
+        System.out.println(authCookieName);
+        response.addCookie(new Cookie(authCookieName, tokens.generateToken(user)));
+        return user;
     }
 }
