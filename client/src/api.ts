@@ -21,7 +21,11 @@ function fetchJson(endpoint: string, options: RequestInit = {}) {
 }
 
 function fetchVoid(endpoint: string, options: RequestInit = {}) {
-    return fetch(new URL(endpoint, server), options).then((res) => {
+    return fetch(new URL(endpoint, server), {
+        credentials: "include",
+        ...options,
+    }).then((res) => {
+        console.log(res);
         if (res.ok) return;
         console.error(res);
         throw new Error("Something went wrong");

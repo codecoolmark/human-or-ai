@@ -87,7 +87,6 @@ public class UsersController {
 
     @DeleteMapping("/users/logout")
     public void usersLogout(HttpServletResponse response) {
-        // TODO: for some reason this isn't deleting the cookie yet
         var authCookie = new Cookie(authCookieName, "");
         authCookie.setPath("/");
         authCookie.setMaxAge(0);
