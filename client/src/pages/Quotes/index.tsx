@@ -1,12 +1,7 @@
 import { Link } from "react-router-dom";
 import { getQuotes } from "../../api";
 import { useEffect, useState } from "react";
-
-function formatDateTime(instant: string) {
-    return new Intl.DateTimeFormat(navigator.language, {
-        dateStyle: "full", timeStyle: "medium"
-    }).format(new Date(instant));
-}
+import { formatDateTime } from "../../formatters";
 
 export default function QuotesPage() {
     const [quotes, setQuotes] = useState([]);

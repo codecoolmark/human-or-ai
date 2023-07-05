@@ -43,3 +43,7 @@ export function createQuote(quote) {
         body: JSON.stringify(quote),
     });
 }
+
+export function getVotes() {
+    return fetchJson("/votes");
+}
