@@ -6,6 +6,7 @@ import RegisterPage from "./pages/Register";
 import NewQuote from "./pages/NewQuote";
 import Votes from "./pages/Votes";
 import Navigation from "./components/Navigation";
+import NotFound from "./pages/NotFound";
 
 export default function App() {
     return (
@@ -19,6 +20,7 @@ export default function App() {
                     <Route path="/quotes" Component={QuotesPage} />
                     <Route path="/quotes/new" Component={NewQuote} />
                     <Route path="/votes" Component={Votes} />
+                    <Route path="*" Component={NotFound} />
                 </Routes>
             </BrowserRouter>
         </>
