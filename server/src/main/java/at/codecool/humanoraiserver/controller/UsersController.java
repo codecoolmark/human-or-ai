@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -82,5 +83,14 @@ public class UsersController {
 
         User user = this.usersService.findUserById(userIdOpt.get());
         return Optional.of(user);
+    }
+
+    @DeleteMapping("/users/logout")
+    public void usersLogout(HttpServletResponse response) {
+        // TODO: for some reason this isn't deleting the cookie yet
+        var authCookie = new Cookie(authCookieName, "");
+        authCookie.setPath("/");
+        authCookie.setMaxAge(0);
+        response.addCookie(authCookie);
     }
 }

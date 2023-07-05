@@ -35,6 +35,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(
                     requests -> requests.requestMatchers(
                         "/users/login",
+                        "/users/logout",
                         "/users/register",
                         "/users/current")
                     .permitAll().anyRequest().authenticated())
@@ -64,7 +65,7 @@ public class WebSecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(List.of("http://localhost**", "http://127.0.0.1**"));
-        configuration.setAllowedMethods(List.of("GET", "POST"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "DELETE"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

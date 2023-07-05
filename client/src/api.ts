@@ -2,12 +2,13 @@ import { LoginData, Quote, Result, UserData } from "./types";
 
 const server = new URL(import.meta.env.VITE_SERVER_URL);
 
-function fetchJson(endpoint: string, options = {}) {
+function fetchJson(endpoint: string, options: RequestInit = {}) {
     return fetch(new URL(endpoint, server), {
         method: "GET",
         credentials: "include",
         headers: {
             "Content-Type": "application/json",
+            ...options.headers,
         },
         ...options,
     }).then((response) => {
@@ -15,6 +16,14 @@ function fetchJson(endpoint: string, options = {}) {
             return response.json();
         }
         console.error(response);
+        throw new Error("Something went wrong");
+    });
+}
+
+function fetchVoid(endpoint: string, options: RequestInit = {}) {
+    return fetch(new URL(endpoint, server), options).then((res) => {
+        if (res.ok) return;
+        console.error(res);
         throw new Error("Something went wrong");
     });
 }
@@ -30,6 +39,12 @@ export function loginUser(login: LoginData): Promise<UserData> {
     return fetchJson("/users/login", {
         method: "POST",
         body: JSON.stringify(login),
+    });
+}
+
+export function logoutUser(): Promise<void> {
+    return fetchVoid("/users/logout", {
+        method: "DELETE",
     });
 }
 
