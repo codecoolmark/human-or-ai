@@ -1,8 +1,9 @@
 package at.codecool.humanoraiserver.controller;
 
 import java.util.Collection;
-import java.util.Optional;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,8 +19,11 @@ import jakarta.servlet.http.HttpServletResponse;
 public class UsersController {
     private final UsersService usersService;
 
-    public UsersController(UsersService usersService) {
+    private final AuthenticationManager authenticationManager;
+
+    public UsersController(UsersService usersService, AuthenticationManager authenticationManager) {
         this.usersService = usersService;
+        this.authenticationManager = authenticationManager;
     }
 
     @GetMapping("/users")
@@ -39,13 +43,9 @@ public class UsersController {
     }
 
     @PostMapping("/users/login")
-    public Result<User> postUsersLogin(@RequestBody UserDTO userData, HttpServletResponse response) {
-        final Result<User> user = usersService.loginUser(userData);
-
-        // if (user.isEmpty()) {
-        // response.setStatus(403);
-        // }
-
-        return user;
+    public User postUsersLogin(@RequestBody UserDTO userData) {
+        var token = new UsernamePasswordAuthenticationToken(userData.getEmail(), userData.getPassword());
+        this.authenticationManager.authenticate(token);
+        return usersService.findUserByEmail(userData.getEmail());
     }
 }

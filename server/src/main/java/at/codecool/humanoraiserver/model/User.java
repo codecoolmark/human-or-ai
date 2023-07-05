@@ -1,5 +1,6 @@
 package at.codecool.humanoraiserver.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -37,10 +38,12 @@ public class User {
         this.nickname = nickname;
     }
 
+    @JsonIgnore
     public String getPasswordHash() {
         return passwordHash;
     }
 
+    @JsonIgnore
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }

@@ -1,9 +1,11 @@
 package at.codecool.humanoraiserver.services;
 
 import java.util.Collection;
-import java.util.Optional;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +15,7 @@ import at.codecool.humanoraiserver.model.UserDTO;
 import at.codecool.humanoraiserver.repositories.UsersRepository;
 
 @Service
-public class UsersService {
+public class UsersService implements UserDetailsService {
     private final UsersRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -43,21 +45,14 @@ public class UsersService {
         }
     }
 
-    public Result<User> loginUser(UserDTO data) {
-        final Optional<User> userOpt = usersRepository.findByEmail(data.getEmail());
-        if (userOpt.isEmpty()) {
-            return Result.error("Invalid login");
-        }
+    public User findUserByEmail(String email) {
+        return usersRepository.findByEmail(email).orElseThrow();
+    }
 
-        final User user = userOpt.get();
-
-        final boolean isValidPassword = passwordEncoder.matches(
-                data.getPassword(),
-                user.getPasswordHash());
-        if (!isValidPassword) {
-            return Result.error("Invalid login");
-        }
-
-        return Result.of(user);
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return usersRepository.findByEmail(username)
+                .map(UserDetailsImpl::new)
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found!"));
     }
 }
