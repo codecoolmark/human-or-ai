@@ -19,20 +19,22 @@ function fetchJson(endpoint: string, options = {}) {
     });
 }
 
-export async function registerUser(
-    login: LoginData,
-): Promise<Result<UserData>> {
+export function registerUser(login: LoginData): Promise<Result<UserData>> {
     return fetchJson("/users/register", {
         method: "POST",
         body: JSON.stringify(login),
     });
 }
 
-export async function loginUser(login: LoginData): Promise<UserData> {
+export function loginUser(login: LoginData): Promise<UserData> {
     return fetchJson("/users/login", {
         method: "POST",
         body: JSON.stringify(login),
     });
+}
+
+export function currentUser(): Promise<UserData | null> {
+    return fetchJson("/users/current");
 }
 
 export function getQuotes(): Promise<Quote[]> {
