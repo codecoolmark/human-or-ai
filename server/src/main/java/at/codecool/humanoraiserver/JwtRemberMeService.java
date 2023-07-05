@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +25,12 @@ public class JwtRemberMeService implements RememberMeServices {
 
     @Override
     public Authentication autoLogin(HttpServletRequest request, HttpServletResponse response) {
-        if (request.getCookies() != null) {
+        if (request.getCookies() == null) {
+            return null;
+        }
+
+        // TODO: this try/catch block may be unnecessary once we reset the auth cookie when login expired
+        try {
             var authentication = Arrays.stream(request.getCookies())
                     .filter(cookie -> cookie.getName().equals(authCookieName))
                     .findAny()
@@ -34,10 +40,12 @@ public class JwtRemberMeService implements RememberMeServices {
 
             if (authentication.isPresent()) {
                 return authentication.get();
+            } else {
+                return null;
             }
+        } catch (AuthenticationException e) {
+            return null;
         }
-
-        return null;
     }
 
     @Override
