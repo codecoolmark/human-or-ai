@@ -5,6 +5,7 @@ const server = new URL(import.meta.env.VITE_SERVER_URL);
 function fetchJson(endpoint: string, options = {}) {
     return fetch(new URL(endpoint, server), {
         method: "GET",
+        credentials: "include",
         headers: {
             "Content-Type": "application/json",
         },

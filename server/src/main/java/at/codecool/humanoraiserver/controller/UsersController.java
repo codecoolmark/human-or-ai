@@ -57,8 +57,9 @@ public class UsersController {
         var token = new UsernamePasswordAuthenticationToken(userData.getEmail(), userData.getPassword());
         this.authenticationManager.authenticate(token);
         var user = usersService.findUserByEmail(userData.getEmail());
-        System.out.println(authCookieName);
-        response.addCookie(new Cookie(authCookieName, tokens.generateToken(user)));
+        var authCookie = new Cookie(authCookieName, tokens.generateToken(user));
+        authCookie.setPath("/");
+        response.addCookie(authCookie);
         return user;
     }
 }

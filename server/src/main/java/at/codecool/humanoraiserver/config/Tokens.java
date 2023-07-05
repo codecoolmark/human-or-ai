@@ -45,8 +45,8 @@ public class Tokens {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-            var userId = (String) claims.get("userId");
-            return Optional.of(Long.parseLong(userId));
+            var userId = ((Integer) claims.get("userId")).longValue();
+            return Optional.of(userId);
         } catch (JwtException jwtE) {
             jwtE.printStackTrace();
             return Optional.empty();

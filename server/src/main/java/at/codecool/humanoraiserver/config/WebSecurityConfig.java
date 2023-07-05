@@ -1,5 +1,6 @@
 package at.codecool.humanoraiserver.config;
 
+import at.codecool.humanoraiserver.JwtAuthenticationProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -24,22 +26,28 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class WebSecurityConfig {
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,
+                                                   AuthenticationManager authenticationManager,
+                                                   RememberMeServices rememberMeServices) throws Exception {
         return httpSecurity.cors(withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authenticationManager(authenticationManager)
-                .authorizeHttpRequests(requests -> requests.requestMatchers("**").permitAll()).build();
+                .authorizeHttpRequests(requests -> requests.requestMatchers("/users/login", "/users/register")
+                        .permitAll().anyRequest().authenticated())
+                .rememberMe(remember -> remember.rememberMeServices(rememberMeServices))
+                .build();
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(UserDetailsService service, PasswordEncoder passwordEncoder) {
+    public DaoAuthenticationProvider authenticationProvider(UserDetailsService service, PasswordEncoder passwordEncoder) {
         var provider = new DaoAuthenticationProvider(passwordEncoder);
         provider.setUserDetailsService(service);
         return provider;
     }
 
-    @Bean AuthenticationManager authenticationManager(AuthenticationProvider provider) {
-        return new ProviderManager(provider);
+    @Bean AuthenticationManager authenticationManager(DaoAuthenticationProvider daoAuthenticationProvider,
+                                                      JwtAuthenticationProvider jwtAuthenticationProvider) {
+        return new ProviderManager(daoAuthenticationProvider, jwtAuthenticationProvider);
     }
 
     @Bean
@@ -53,6 +61,7 @@ public class WebSecurityConfig {
         configuration.setAllowedOriginPatterns(List.of("http://localhost**", "http://127.0.0.1**"));
         configuration.setAllowedMethods(List.of("GET", "POST"));
         configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
