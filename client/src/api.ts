@@ -84,7 +84,7 @@ export function createVote(vote: Omit<Vote, "id" | "created">): Promise<Vote> {
     });
 }
 
-export function quote() {
+export function quote(): Promise<Quote> {
     return fetchJson("/quote", {
         method: "POST",
     });

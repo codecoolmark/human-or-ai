@@ -16,6 +16,7 @@ export default function Navigation() {
             <Link to="/">Home</Link>
             {user ? (
                 <>
+                    <Link to="/vote">Vote</Link>
                     <Link to="/votes">Votes</Link>
                     <Link to="/quotes">Quotes</Link>
                     <Link to="/quotes/new">New Quote</Link>

@@ -1,14 +1,14 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import LandingPage from "./pages/Landing";
-import QuotesPage from "./pages/Quotes";
-import LoginPage from "./pages/Login";
-import RegisterPage from "./pages/Register";
-import NewQuote from "./pages/NewQuote";
-import Votes from "./pages/Votes";
 import Navigation from "./components/Navigation";
+import LandingPage from "./pages/Landing";
+import LoginPage from "./pages/Login";
+import NewQuote from "./pages/NewQuote";
 import NotFound from "./pages/NotFound";
+import QuotesPage from "./pages/Quotes";
+import RegisterPage from "./pages/Register";
+import VotePage from "./pages/Vote";
+import VotesPage from "./pages/Votes";
 import { useStore } from "./store";
-import Vote from "./pages/Vote";
 
 export default function App() {
     return (
@@ -22,25 +22,37 @@ export default function App() {
                     <Route
                         path="/quotes"
                         element={
-                            <CheckLogin LoggedIn={QuotesPage} LoggedOut={LoginPage}/>
+                            <CheckLogin
+                                LoggedIn={QuotesPage}
+                                LoggedOut={LoginPage}
+                            />
                         }
                     />
                     <Route
                         path="/quotes/new"
                         element={
-                            <CheckLogin LoggedIn={NewQuote} LoggedOut={LoginPage} />
+                            <CheckLogin
+                                LoggedIn={NewQuote}
+                                LoggedOut={LoginPage}
+                            />
                         }
                     />
                     <Route
                         path="/vote"
                         element={
-                            <CheckLogin LoggedIn={Vote} LoggedOut={LoginPage} />
+                            <CheckLogin
+                                LoggedIn={VotePage}
+                                LoggedOut={LoginPage}
+                            />
                         }
                     />
                     <Route
                         path="/votes"
                         element={
-                            <CheckLogin LoggedIn={Votes} LoggedOut={LoginPage}/>
+                            <CheckLogin
+                                LoggedIn={VotesPage}
+                                LoggedOut={LoginPage}
+                            />
                         }
                     />
                     <Route path="*" Component={NotFound} />
@@ -50,12 +62,13 @@ export default function App() {
     );
 }
 
-function CheckLogin({ LoggedIn, LoggedOut }: { LoggedIn: () => JSX.Element, LoggedOut: () => JSX.Element }) {
+function CheckLogin({
+    LoggedIn,
+    LoggedOut,
+}: {
+    LoggedIn: () => JSX.Element;
+    LoggedOut: () => JSX.Element;
+}) {
     const isLoggedIn = useStore(({ user }) => !!user);
-
-    if (!isLoggedIn) {
-        return <LoggedOut></LoggedOut>
-    }
-
-    return <><LoggedIn></LoggedIn></>;
+    return isLoggedIn ? <LoggedIn /> : <LoggedOut />;
 }
