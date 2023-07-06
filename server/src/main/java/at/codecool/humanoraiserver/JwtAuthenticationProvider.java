@@ -1,6 +1,5 @@
 package at.codecool.humanoraiserver;
 
-import at.codecool.humanoraiserver.config.Tokens;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;

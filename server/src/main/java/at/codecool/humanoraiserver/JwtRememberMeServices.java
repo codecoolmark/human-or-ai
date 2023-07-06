@@ -1,6 +1,5 @@
 package at.codecool.humanoraiserver;
 
-import at.codecool.humanoraiserver.config.Tokens;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,15 +11,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 
 @Component
-public class JwtRemberMeService implements RememberMeServices {
+public class JwtRememberMeServices implements RememberMeServices {
     private final String authCookieName;
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
 
     private final Tokens tokens;
 
-    public JwtRemberMeService(@Value("${cookies.authcookie.name}") String authCookieName,
-                              JwtAuthenticationProvider jwtAuthenticationProvider,
-                              Tokens tokens) {
+    public JwtRememberMeServices(@Value("${cookies.authcookie.name}") String authCookieName,
+                                 JwtAuthenticationProvider jwtAuthenticationProvider,
+                                 Tokens tokens) {
         this.authCookieName = authCookieName;
         this.jwtAuthenticationProvider = jwtAuthenticationProvider;
         this.tokens = tokens;

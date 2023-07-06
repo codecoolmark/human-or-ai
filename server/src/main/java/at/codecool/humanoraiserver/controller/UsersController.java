@@ -2,13 +2,10 @@ package at.codecool.humanoraiserver.controller;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.WebUtils;
 
 import at.codecool.humanoraiserver.Result;
-import at.codecool.humanoraiserver.config.Tokens;
+import at.codecool.humanoraiserver.Tokens;
 import at.codecool.humanoraiserver.model.User;
 import at.codecool.humanoraiserver.model.UserDTO;
 import at.codecool.humanoraiserver.services.UsersService;

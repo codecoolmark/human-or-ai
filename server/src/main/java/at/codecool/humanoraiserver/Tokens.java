@@ -1,6 +1,5 @@
-package at.codecool.humanoraiserver.config;
+package at.codecool.humanoraiserver;
 
-import at.codecool.humanoraiserver.model.User;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
