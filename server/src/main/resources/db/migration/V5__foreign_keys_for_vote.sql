@@ -1,0 +1,1 @@
+alter table vote add column user_id bigint references "user"(id)

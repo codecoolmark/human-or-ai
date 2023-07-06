@@ -1,4 +1,4 @@
-import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LandingPage from "./pages/Landing";
 import QuotesPage from "./pages/Quotes";
 import LoginPage from "./pages/Login";
@@ -8,6 +8,7 @@ import Votes from "./pages/Votes";
 import Navigation from "./components/Navigation";
 import NotFound from "./pages/NotFound";
 import { useStore } from "./store";
+import Vote from "./pages/Vote";
 
 export default function App() {
     return (
@@ -28,6 +29,12 @@ export default function App() {
                         path="/quotes/new"
                         element={
                             <CheckLogin LoggedIn={NewQuote} LoggedOut={LoginPage} />
+                        }
+                    />
+                    <Route
+                        path="/vote"
+                        element={
+                            <CheckLogin LoggedIn={Vote} LoggedOut={LoginPage} />
                         }
                     />
                     <Route

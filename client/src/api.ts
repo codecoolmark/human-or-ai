@@ -76,3 +76,9 @@ export function createVote(vote: Omit<Vote, "id" | "created">): Promise<Vote> {
         body: JSON.stringify(vote),
     });
 }
+
+export function quote() {
+    return fetchJson("/quote", {
+        method: "POST"
+    });
+}

@@ -14,6 +14,8 @@ public class User {
     private String nickname;
     private String passwordHash;
 
+    private Long quoteSeed;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -46,5 +48,13 @@ public class User {
     @JsonIgnore
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
+    }
+
+    public Long getQuoteSeed() {
+        return quoteSeed;
+    }
+
+    public void setQuoteSeed(Long quoteSeed) {
+        this.quoteSeed = quoteSeed;
     }
 }
