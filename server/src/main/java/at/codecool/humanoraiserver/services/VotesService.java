@@ -1,5 +1,7 @@
 package at.codecool.humanoraiserver.services;
 
+import at.codecool.humanoraiserver.model.Quote;
+import at.codecool.humanoraiserver.model.User;
 import at.codecool.humanoraiserver.model.Vote;
 import at.codecool.humanoraiserver.repositories.VotesRepository;
 
@@ -19,8 +21,13 @@ public class VotesService {
         return voteRepository.findAll();
     }
 
-    public Vote createVote(Vote newVote) {
-        newVote.setCreated(Instant.now());
-        return this.voteRepository.save(newVote);
+    public Vote createVote(Quote quote, User forUser, boolean isReal) {
+        var vote = new Vote();
+        vote.setUserId(forUser.getId());
+        vote.setQuoteId(quote.getId());
+        vote.setReal(isReal);
+        vote.setCreated(Instant.now());
+
+        return this.voteRepository.save(vote);
     }
 }

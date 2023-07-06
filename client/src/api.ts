@@ -71,6 +71,7 @@ export function getVotes(): Promise<Vote[]> {
 }
 
 export function createVote(vote: Omit<Vote, "id" | "created">): Promise<Vote> {
+    console.log(vote)
     return fetchJson("/votes", {
         method: "POST",
         body: JSON.stringify(vote),

@@ -20,6 +20,8 @@ public class Vote {
 
     private Boolean isReal;
 
+    private Long userId;
+
     public Long getQuoteId() {
         return quoteId;
     }
@@ -44,12 +46,19 @@ public class Vote {
         this.id = id;
     }
 
-    @JsonProperty(value = "isReal")
     public boolean getReal() {
         return isReal;
     }
 
     public void setReal(Boolean real) {
         isReal = real;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }
