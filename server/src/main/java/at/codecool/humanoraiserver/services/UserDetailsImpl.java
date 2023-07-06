@@ -10,11 +10,18 @@ import java.util.List;
 
 public class UserDetailsImpl implements UserDetails {
 
-    private final User user;
+    private final String userName;
+    private final String password;
+
+    public UserDetailsImpl(String userName, String password) {
+        this.userName = userName;
+        this.password = password;
+    }
 
     public UserDetailsImpl(User user) {
-        this.user = user;
+       this(user.getEmail(), user.getPasswordHash());
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -23,12 +30,12 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPasswordHash();
+        return this.password;
     }
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return this.userName;
     }
 
     @Override

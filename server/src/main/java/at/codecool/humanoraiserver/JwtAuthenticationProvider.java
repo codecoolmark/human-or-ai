@@ -18,11 +18,14 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         if (authentication instanceof JwtTokenAuthentication jwtAuthentication) {
-            var userId = tokens.validateToken(jwtAuthentication.getCredentials());
+            var userDetails = tokens.validateToken(jwtAuthentication.getCredentials());
 
-            if (userId.isPresent()) {
-                authentication.setAuthenticated(true);
-                return authentication;
+            if (userDetails != null) {
+
+                var newAuthentication = new JwtTokenAuthentication(jwtAuthentication.getCredentials(), userDetails);
+                newAuthentication.setAuthenticated(true);
+                return newAuthentication;
+
             } else {
                 throw new InsufficientAuthenticationException("Invalid token");
             }

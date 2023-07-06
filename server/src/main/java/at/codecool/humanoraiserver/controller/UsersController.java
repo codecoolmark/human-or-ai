@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -68,12 +69,9 @@ public class UsersController {
             return Optional.empty();
         }
 
-        Optional<String> userIdOpt = this.tokens.validateToken(authCookie.getValue());
-        if (userIdOpt.isEmpty()) {
-            return Optional.empty();
-        }
+        var userDetails = this.tokens.validateToken(authCookie.getValue());
 
-        User user = this.usersService.findUserByEmail(userIdOpt.get());
+        User user = this.usersService.findUserByEmail(userDetails.getUsername());
         return Optional.of(user);
     }
 

@@ -1,5 +1,6 @@
 package at.codecool.humanoraiserver;
 
+import at.codecool.humanoraiserver.services.UserDetailsImpl;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -38,7 +39,7 @@ public class Tokens {
                 .compact();
     }
 
-    public Optional<String> validateToken(String token) {
+    public UserDetails validateToken(String token) {
         try {
             var claims = Jwts.parserBuilder()
                     .setSigningKey(secret)
@@ -46,10 +47,10 @@ public class Tokens {
                     .parseClaimsJws(token)
                     .getBody();
             var username = (String) claims.get("userName");
-            return Optional.of(username);
+            return new UserDetailsImpl(username, token);
         } catch (JwtException jwtE) {
             jwtE.printStackTrace();
-            return Optional.empty();
+            return null;
         }
     }
 }

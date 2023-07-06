@@ -1,8 +1,8 @@
 package at.codecool.humanoraiserver;
 
-import at.codecool.humanoraiserver.services.UserDetailsImpl;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.security.auth.Subject;
 import java.util.Collection;
@@ -11,12 +11,18 @@ public class JwtTokenAuthentication implements Authentication {
 
     private final String token;
 
-    private UserDetailsImpl userDetails;
+    private UserDetails userDetails;
 
     private boolean isAuthenticated;
 
     public JwtTokenAuthentication(String token) {
         this.token = token;
+        this.userDetails = null;
+    }
+
+    public JwtTokenAuthentication(String token, UserDetails userDetails) {
+        this.token = token;
+        this.userDetails = userDetails;
     }
 
     @Override
@@ -30,13 +36,13 @@ public class JwtTokenAuthentication implements Authentication {
     }
 
     @Override
-    public UserDetailsImpl getDetails() {
+    public UserDetails getDetails() {
         return this.userDetails;
     }
 
     @Override
     public Object getPrincipal() {
-        return null;
+        return this.userDetails;
     }
 
     @Override
@@ -57,9 +63,5 @@ public class JwtTokenAuthentication implements Authentication {
     @Override
     public boolean implies(Subject subject) {
         return Authentication.super.implies(subject);
-    }
-
-    public void setUserDetails(UserDetailsImpl userDetailsImpl) {
-        this.userDetails = userDetailsImpl;
     }
 }

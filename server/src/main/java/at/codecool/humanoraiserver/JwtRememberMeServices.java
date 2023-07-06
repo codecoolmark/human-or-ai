@@ -4,6 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.RememberMeServices;
@@ -32,22 +33,52 @@ public class JwtRememberMeServices implements RememberMeServices {
         if (cookie != null) {
             var cookieValue = cookie.getValue();
             var authenticationToken = new JwtTokenAuthentication(cookieValue);
-            return jwtAuthenticationProvider.authenticate(authenticationToken);
+
+            try {
+                var authentication = jwtAuthenticationProvider.authenticate(authenticationToken);
+
+                if (!authentication.isAuthenticated()) {
+                    invalidateCookie(response);
+                    return null;
+                }
+
+                setAuthCookie(response, authentication);
+
+                return authentication;
+
+            } catch (InsufficientAuthenticationException ae) {
+                invalidateCookie(response);
+                return null;
+            }
         }
 
         return null;
     }
 
+    private void invalidateCookie(HttpServletResponse response) {
+        var cookie = createAuthCookie("");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+    }
+
     @Override
     public void loginFail(HttpServletRequest request, HttpServletResponse response) {
-        // In case a login fails we need to do exactly nothing
+        invalidateCookie(response);
     }
 
     @Override
     public void loginSuccess(HttpServletRequest request, HttpServletResponse response, Authentication successfulAuthentication) {
-        var user = (UserDetails) successfulAuthentication.getPrincipal();
-        var authCookie = new Cookie(authCookieName, tokens.generateToken(user));
+        setAuthCookie(response, successfulAuthentication);
+    }
+
+    private void setAuthCookie(HttpServletResponse response, Authentication authentication) {
+        var user = (UserDetails) authentication.getPrincipal();
+        response.addCookie(createAuthCookie(tokens.generateToken(user)));
+    }
+
+    private Cookie createAuthCookie(String token) {
+        var authCookie = new Cookie(authCookieName, token);
         authCookie.setPath("/");
-        response.addCookie(authCookie);
+        return authCookie;
     }
 }
