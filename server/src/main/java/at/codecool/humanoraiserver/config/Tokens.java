@@ -5,6 +5,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -30,23 +31,23 @@ public class Tokens {
         this.timeout = timeout;
     }
 
-    public String generateToken(User user) {
+    public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
-                .claim("userId", user.getId())
+                .claim("userName", userDetails)
                 .setExpiration(Date.from(ChronoUnit.SECONDS.addTo(Instant.now(), this.timeout)))
                 .signWith(this.secret)
                 .compact();
     }
 
-    public Optional<Long> validateToken(String token) {
+    public Optional<String> validateToken(String token) {
         try {
             var claims = Jwts.parserBuilder()
                     .setSigningKey(secret)
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-            var userId = ((Integer) claims.get("userId")).longValue();
-            return Optional.of(userId);
+            var username = (String) claims.get("userName");
+            return Optional.of(username);
         } catch (JwtException jwtE) {
             jwtE.printStackTrace();
             return Optional.empty();

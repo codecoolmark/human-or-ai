@@ -1,6 +1,8 @@
 package at.codecool.humanoraiserver.config;
 
+import at.codecool.humanoraiserver.JsonAuthenticationFilter;
 import at.codecool.humanoraiserver.JwtAuthenticationProvider;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,6 +15,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -41,6 +45,14 @@ public class WebSecurityConfig {
                     .permitAll().anyRequest().authenticated())
                 .rememberMe(remember -> remember.rememberMeServices(rememberMeServices))
                 .build();
+    }
+
+    @Bean
+    public AbstractAuthenticationProcessingFilter authenticationFilter(ObjectMapper objectMapper,
+                                                                       AuthenticationManager authenticationManager,
+                                                                       RememberMeServices rememberMeServices) {
+        return new JsonAuthenticationFilter("/users/login", objectMapper, authenticationManager,
+                rememberMeServices);
     }
 
     @Bean

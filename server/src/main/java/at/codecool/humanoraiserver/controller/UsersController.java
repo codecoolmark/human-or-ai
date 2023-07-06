@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,14 +60,8 @@ public class UsersController {
     }
 
     @PostMapping("/users/login")
-    public User postUsersLogin(@RequestBody UserDTO userData, HttpServletResponse response) {
-        var token = new UsernamePasswordAuthenticationToken(userData.getEmail(), userData.getPassword());
-        this.authenticationManager.authenticate(token);
-        var user = usersService.findUserByEmail(userData.getEmail());
-        var authCookie = new Cookie(authCookieName, tokens.generateToken(user));
-        authCookie.setPath("/");
-        response.addCookie(authCookie);
-        return user;
+    public User postUsersLogin(Authentication authentication) {
+        return usersService.findUserByEmail(authentication.getName());
     }
 
     @GetMapping("/users/current")
@@ -76,12 +71,12 @@ public class UsersController {
             return Optional.empty();
         }
 
-        Optional<Long> userIdOpt = this.tokens.validateToken(authCookie.getValue());
+        Optional<String> userIdOpt = this.tokens.validateToken(authCookie.getValue());
         if (userIdOpt.isEmpty()) {
             return Optional.empty();
         }
 
-        User user = this.usersService.findUserById(userIdOpt.get());
+        User user = this.usersService.findUserByEmail(userIdOpt.get());
         return Optional.of(user);
     }
 

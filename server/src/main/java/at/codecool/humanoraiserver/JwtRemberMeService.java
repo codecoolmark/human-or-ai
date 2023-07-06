@@ -1,5 +1,8 @@
 package at.codecool.humanoraiserver;
 
+import at.codecool.humanoraiserver.config.Tokens;
+import at.codecool.humanoraiserver.model.User;
+import at.codecool.humanoraiserver.services.UserDetailsImpl;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -7,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.stereotype.Component;
 
@@ -15,12 +19,17 @@ import java.util.Arrays;
 @Component
 public class JwtRemberMeService implements RememberMeServices {
     private final String authCookieName;
-
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
 
-    public JwtRemberMeService(@Value("${cookies.authcookie.name}") String authCookieName, JwtAuthenticationProvider jwtAuthenticationProvider, AuthenticationManager authenticationManager) {
+    private final Tokens tokens;
+
+    public JwtRemberMeService(@Value("${cookies.authcookie.name}") String authCookieName,
+                              JwtAuthenticationProvider jwtAuthenticationProvider,
+                              AuthenticationManager authenticationManager,
+                              Tokens tokens) {
         this.authCookieName = authCookieName;
         this.jwtAuthenticationProvider = jwtAuthenticationProvider;
+        this.tokens = tokens;
     }
 
     @Override
@@ -50,13 +59,14 @@ public class JwtRemberMeService implements RememberMeServices {
 
     @Override
     public void loginFail(HttpServletRequest request, HttpServletResponse response) {
-        // TODO ms 2023.07.05 get this method called and reset cookie
-        System.out.println("loginFail");
+        // In case a login fails we need to do exactly nothing
     }
 
     @Override
     public void loginSuccess(HttpServletRequest request, HttpServletResponse response, Authentication successfulAuthentication) {
-        // TODO ms 2023.07.05 get this method called and set cookie
-        System.out.println("loginSuccess");
+        var user = (UserDetails) successfulAuthentication.getPrincipal();
+        var authCookie = new Cookie(authCookieName, tokens.generateToken(user));
+        authCookie.setPath("/");
+        response.addCookie(authCookie);
     }
 }
