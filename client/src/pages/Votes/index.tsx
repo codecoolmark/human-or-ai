@@ -26,8 +26,8 @@ export default function Votes() {
                     <tbody>
                         {votes.map((vote, index) => (
                             <tr key={index}>
-                                <td>{vote.userId}</td>
                                 <td>{vote.quoteId}</td>
+                                <td>{vote.userId}</td>
                                 <td>{vote.isReal ? "Human" : "AI"}</td>
                                 <td>{formatDateTime(vote.created)}</td>
                             </tr>
