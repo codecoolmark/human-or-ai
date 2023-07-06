@@ -5,6 +5,7 @@ import at.codecool.humanoraiserver.JwtAuthenticationProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -19,6 +20,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.security.web.util.matcher.AndRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -39,10 +42,7 @@ public class WebSecurityConfig {
                 .authenticationManager(authenticationManager)
                 .authorizeHttpRequests(
                     requests -> requests.requestMatchers(
-                        "/users/login",
-                        "/users/logout",
-                        "/users/register",
-                        "/users/current")
+                        "/session", "/users/register")
                     .permitAll().anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .rememberMe(remember -> remember.rememberMeServices(rememberMeServices))
@@ -53,7 +53,9 @@ public class WebSecurityConfig {
     public AbstractAuthenticationProcessingFilter authenticationFilter(ObjectMapper objectMapper,
                                                                        AuthenticationManager authenticationManager,
                                                                        RememberMeServices rememberMeServices) {
-        return new JsonAuthenticationFilter("/users/login", objectMapper, authenticationManager,
+        return new JsonAuthenticationFilter(new AndRequestMatcher(
+                new AntPathRequestMatcher("/session"),
+                request -> HttpMethod.POST.matches(request.getMethod())), objectMapper, authenticationManager,
                 rememberMeServices);
     }
 

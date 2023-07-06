@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { shallow } from "zustand/shallow";
 import { loginUser } from "../../api";
-import LoginForm from "../../components/LoginForm";
+import LoginForm from "./LoginForm";
 import { useStore } from "../../store";
 import { LoginData } from "../../types";
 
@@ -36,9 +36,6 @@ export default function LoginPage() {
 
             <LoginForm
                 onSubmit={onLogin}
-                disabled={!!user}
-                submitLabel="Login"
-                omitNickname
             />
         </main>
     );

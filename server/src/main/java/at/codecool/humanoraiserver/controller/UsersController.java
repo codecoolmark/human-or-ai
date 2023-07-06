@@ -1,26 +1,15 @@
 package at.codecool.humanoraiserver.controller;
 
-import java.util.Collection;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.WebUtils;
 
 import at.codecool.humanoraiserver.Result;
 import at.codecool.humanoraiserver.Tokens;
 import at.codecool.humanoraiserver.model.User;
-import at.codecool.humanoraiserver.model.UserDTO;
 import at.codecool.humanoraiserver.services.UsersService;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
@@ -41,45 +30,9 @@ public class UsersController {
         this.authCookieName = authCookieName;
     }
 
-    @GetMapping("/users")
-    public Collection<User> getUsers() {
-        return usersService.getUsers();
-    }
-
-    @PostMapping("/users/register")
-    public Result<User> postUsers(@RequestBody UserDTO userData, HttpServletResponse response) {
+    @PostMapping("/users/")
+    public Result<User> postUsers(@RequestBody PostUsersRequest userData, HttpServletResponse response) {
         final Result<User> user = usersService.registerUser(userData);
-
-        // if (user.isError()) {
-        // response.setStatus(403);
-        // }
-
         return user;
-    }
-
-    @PostMapping("/users/login")
-    public User postUsersLogin(Authentication authentication) {
-        return usersService.findUserByEmail(authentication.getName());
-    }
-
-    @GetMapping("/users/current")
-    public Optional<User> usersCurrent(HttpServletRequest request) {
-        Cookie authCookie = WebUtils.getCookie(request, this.authCookieName);
-        if (authCookie == null) {
-            return Optional.empty();
-        }
-
-        var userDetails = this.tokens.validateToken(authCookie.getValue());
-
-        User user = this.usersService.findUserByEmail(userDetails.getUsername());
-        return Optional.of(user);
-    }
-
-    @DeleteMapping("/users/logout")
-    public void usersLogout(HttpServletResponse response) {
-        var authCookie = new Cookie(authCookieName, "");
-        authCookie.setPath("/");
-        authCookie.setMaxAge(0);
-        response.addCookie(authCookie);
     }
 }

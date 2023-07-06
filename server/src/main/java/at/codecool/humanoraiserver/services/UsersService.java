@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import at.codecool.humanoraiserver.Result;
 import at.codecool.humanoraiserver.model.User;
-import at.codecool.humanoraiserver.model.UserDTO;
+import at.codecool.humanoraiserver.controller.PostUsersRequest;
 import at.codecool.humanoraiserver.repositories.UsersRepository;
 
 @Service
@@ -30,7 +30,7 @@ public class UsersService implements UserDetailsService {
         return usersRepository.findAll();
     }
 
-    public Result<User> registerUser(UserDTO data) {
+    public Result<User> registerUser(PostUsersRequest data) {
         final User user = new User();
         user.setEmail(data.getEmail());
         user.setNickname(data.getNickname());

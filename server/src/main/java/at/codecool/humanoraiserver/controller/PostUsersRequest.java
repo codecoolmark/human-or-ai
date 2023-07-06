@@ -1,6 +1,6 @@
-package at.codecool.humanoraiserver.model;
+package at.codecool.humanoraiserver.controller;
 
-public class UserDTO {
+public class PostUsersRequest {
     private String email;
     private String nickname;
     private String password;

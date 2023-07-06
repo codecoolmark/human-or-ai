@@ -31,7 +31,7 @@ export default function LoginForm({
     const [passwordConfirm, setPasswordConfirm] = useState("");
 
     const [errors, setErrors] = useState({
-        email: null as null | string,
+        userName: null as null | string,
         nickname: null as null | string,
         password: null as null | string,
         passwordConfirm: null as null | string,
@@ -80,7 +80,7 @@ export default function LoginForm({
         event.preventDefault();
 
         if (onSubmitProp && isValid) {
-            onSubmitProp({ email, nickname, password });
+            onSubmitProp({ userName: email, nickname, password });
         }
     };
 

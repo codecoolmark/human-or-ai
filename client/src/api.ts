@@ -32,27 +32,27 @@ function fetchVoid(endpoint: string, options: RequestInit = {}) {
 }
 
 export function registerUser(login: LoginData): Promise<Result<UserData>> {
-    return fetchJson("/users/register", {
+    return fetchJson("/users/", {
         method: "POST",
         body: JSON.stringify(login),
     });
 }
 
 export function loginUser(login: LoginData): Promise<UserData> {
-    return fetchJson("/users/login", {
+    return fetchJson("/session", {
         method: "POST",
         body: JSON.stringify(login),
     });
 }
 
 export function logoutUser(): Promise<void> {
-    return fetchVoid("/users/logout", {
+    return fetchVoid("/session", {
         method: "DELETE",
     });
 }
 
 export function currentUser(): Promise<UserData | null> {
-    return fetchJson("/users/current");
+    return fetchJson("/session");
 }
 
 export function getQuotes(): Promise<Quote[]> {
