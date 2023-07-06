@@ -28,6 +28,8 @@ export default function NewQuote() {
         }).then(() => navigate("/quotes"));
     };
 
+    const isValid = Boolean(text && expires);
+
     return (
         <main>
             <h1>Add a new quote</h1>
@@ -56,9 +58,10 @@ export default function NewQuote() {
                         onChange={(event) => setExpires(event.target.value)}
                     />
                 </label>
-                <button type="submit">Create new quote</button>
+                <button type="submit" disabled={!isValid}>
+                    Create new quote
+                </button>
             </form>
         </main>
     );
 }
-

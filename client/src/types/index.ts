@@ -25,6 +25,7 @@ export interface Quote {
 export interface Vote {
     id: number;
     quoteId: number;
+    userId: number;
     isReal: boolean;
     created: string;
 }
