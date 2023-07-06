@@ -32,8 +32,16 @@ public class QuotesService {
 
     public Quote nextQuoteForUser(User forUser) {
         var seed = forUser.getQuoteSeed();
+        if (seed == null) {
+            seed = System.currentTimeMillis();
+        }
+
         var randomGenerator = new Random(seed);
         var quotes = new ArrayList<>(quotesRepository.filterOpenQuotesForUser(forUser));
+        if (quotes.isEmpty()) {
+            return null;
+        }
+
         var index = randomGenerator.nextInt(quotes.size());
         var nextSeed = randomGenerator.nextLong();
         forUser.setQuoteSeed(nextSeed);
