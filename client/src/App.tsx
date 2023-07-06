@@ -21,25 +21,19 @@ export default function App() {
                     <Route
                         path="/quotes"
                         element={
-                            <LoggedIn>
-                                <QuotesPage />
-                            </LoggedIn>
+                            <CheckLogin LoggedIn={QuotesPage} LoggedOut={LoginPage}/>
                         }
                     />
                     <Route
                         path="/quotes/new"
                         element={
-                            <LoggedIn>
-                                <NewQuote />
-                            </LoggedIn>
+                            <CheckLogin LoggedIn={NewQuote} LoggedOut={LoginPage} />
                         }
                     />
                     <Route
                         path="/votes"
                         element={
-                            <LoggedIn>
-                                <Votes />
-                            </LoggedIn>
+                            <CheckLogin LoggedIn={Votes} LoggedOut={LoginPage}/>
                         }
                     />
                     <Route path="*" Component={NotFound} />
@@ -49,16 +43,12 @@ export default function App() {
     );
 }
 
-function LoggedIn({ children }: { children: React.ReactNode }) {
+function CheckLogin({ LoggedIn, LoggedOut }: { LoggedIn: () => JSX.Element, LoggedOut: () => JSX.Element }) {
     const isLoggedIn = useStore(({ user }) => !!user);
 
     if (!isLoggedIn) {
-        return (
-            <p>
-                Please <Link to="/login">login</Link> to view
-            </p>
-        );
+        return <LoggedOut></LoggedOut>
     }
 
-    return <>{children}</>;
+    return <><LoggedIn></LoggedIn></>;
 }
