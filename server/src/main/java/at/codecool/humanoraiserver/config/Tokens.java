@@ -33,7 +33,7 @@ public class Tokens {
 
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
-                .claim("userName", userDetails)
+                .claim("userName", userDetails.getUsername())
                 .setExpiration(Date.from(ChronoUnit.SECONDS.addTo(Instant.now(), this.timeout)))
                 .signWith(this.secret)
                 .compact();

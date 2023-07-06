@@ -1,20 +1,15 @@
 package at.codecool.humanoraiserver;
 
 import at.codecool.humanoraiserver.config.Tokens;
-import at.codecool.humanoraiserver.model.User;
-import at.codecool.humanoraiserver.services.UserDetailsImpl;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
+import org.springframework.web.util.WebUtils;
 
 @Component
 public class JwtRemberMeService implements RememberMeServices {
@@ -25,7 +20,6 @@ public class JwtRemberMeService implements RememberMeServices {
 
     public JwtRemberMeService(@Value("${cookies.authcookie.name}") String authCookieName,
                               JwtAuthenticationProvider jwtAuthenticationProvider,
-                              AuthenticationManager authenticationManager,
                               Tokens tokens) {
         this.authCookieName = authCookieName;
         this.jwtAuthenticationProvider = jwtAuthenticationProvider;
@@ -34,27 +28,15 @@ public class JwtRemberMeService implements RememberMeServices {
 
     @Override
     public Authentication autoLogin(HttpServletRequest request, HttpServletResponse response) {
-        if (request.getCookies() == null) {
-            return null;
+        var cookie = WebUtils.getCookie(request, authCookieName);
+
+        if (cookie != null) {
+            var cookieValue = cookie.getValue();
+            var authenticationToken = new JwtTokenAuthentication(cookieValue);
+            return jwtAuthenticationProvider.authenticate(authenticationToken);
         }
 
-        // TODO: this try/catch block may be unnecessary once we reset the auth cookie when login expired
-        try {
-            var authentication = Arrays.stream(request.getCookies())
-                    .filter(cookie -> cookie.getName().equals(authCookieName))
-                    .findAny()
-                    .map(Cookie::getValue)
-                    .map(JwtTokenAuthentication::new)
-                    .map(jwtAuthenticationProvider::authenticate);
-
-            if (authentication.isPresent()) {
-                return authentication.get();
-            } else {
-                return null;
-            }
-        } catch (AuthenticationException e) {
-            return null;
-        }
+        return null;
     }
 
     @Override
