@@ -13,7 +13,9 @@ export default function Vote() {
     }
 
     const fetchQuote = () => {
-        api.quote().then((newQuote) => setQuote(newQuote));
+        api.quote()
+            .then((newQuote) => setQuote(newQuote))
+            .catch(() => setQuote(null));
     };
 
     useEffect(() => {
@@ -49,9 +51,8 @@ export default function Vote() {
                     onAi={onAi}
                 />
             ) : (
-                <></>
+                <p>No quote</p>
             )}
         </main>
     );
 }
-

@@ -21,7 +21,11 @@ public class QuoteController {
     @PostMapping ("/quote")
     public PostQuoteResponse postQuote(Authentication authentication) {
         var user = usersRepository.findByEmail(authentication.getName());
-        var quote = quotesService.nextQuoteForUser(user.orElseThrow());
-        return new PostQuoteResponse(quote);
+        var quoteOpt = quotesService.nextQuoteForUser(user.orElseThrow());
+        if (quoteOpt.isEmpty()) {
+            return null;
+        }
+
+        return new PostQuoteResponse(quoteOpt.get());
     }
 }

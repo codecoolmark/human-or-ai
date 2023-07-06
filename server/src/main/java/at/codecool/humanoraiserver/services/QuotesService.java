@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -30,7 +31,7 @@ public class QuotesService {
         return newQuote;
     }
 
-    public Quote nextQuoteForUser(User forUser) {
+    public Optional<Quote> nextQuoteForUser(User forUser) {
         var seed = forUser.getQuoteSeed();
         if (seed == null) {
             seed = System.currentTimeMillis();
@@ -39,13 +40,14 @@ public class QuotesService {
         var randomGenerator = new Random(seed);
         var quotes = new ArrayList<>(quotesRepository.filterOpenQuotesForUser(forUser));
         if (quotes.isEmpty()) {
-            return null;
+            return Optional.empty();
         }
 
         var index = randomGenerator.nextInt(quotes.size());
         var nextSeed = randomGenerator.nextLong();
         forUser.setQuoteSeed(nextSeed);
         usersRepository.save(forUser);
-        return quotes.get(index);
+
+        return Optional.of(quotes.get(index));
     }
 }
