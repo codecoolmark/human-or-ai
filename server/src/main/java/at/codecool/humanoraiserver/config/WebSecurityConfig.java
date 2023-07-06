@@ -42,7 +42,7 @@ public class WebSecurityConfig {
                 .authenticationManager(authenticationManager)
                 .authorizeHttpRequests(
                     requests -> requests.requestMatchers(
-                        "/session", "/users/register")
+                        "/session", "/users")
                     .permitAll().anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .rememberMe(remember -> remember.rememberMeServices(rememberMeServices))

@@ -30,7 +30,7 @@ public class UsersController {
         this.authCookieName = authCookieName;
     }
 
-    @PostMapping("/users/")
+    @PostMapping("/users")
     public Result<User> postUsers(@RequestBody PostUsersRequest userData, HttpServletResponse response) {
         final Result<User> user = usersService.registerUser(userData);
         return user;

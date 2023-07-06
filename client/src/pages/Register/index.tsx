@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { registerUser } from "../../api";
 import LoginForm from "../../components/LoginForm";
-import { LoginData, UserData } from "../../types";
+import { LoginData, RegisterData, UserData } from "../../types";
 
 export default function RegisterPage() {
     const [registerError, setRegisterError] = useState<string | null>(null);
     const [registeredUser, setRegisteredUser] = useState<UserData | null>(null);
 
-    const onRegister = async (login: LoginData) => {
+    const onRegister = async (data: RegisterData) => {
         try {
-            const user = await registerUser(login);
+            const user = await registerUser(data);
             if (user.isOk) {
                 setRegisteredUser(user.value);
             } else {

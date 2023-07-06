@@ -1,4 +1,11 @@
-import { LoginData, Quote, Result, UserData, Vote } from "./types";
+import {
+    LoginData,
+    Quote,
+    RegisterData,
+    Result,
+    UserData,
+    Vote,
+} from "./types";
 
 const server = new URL(import.meta.env.VITE_SERVER_URL);
 
@@ -31,10 +38,10 @@ function fetchVoid(endpoint: string, options: RequestInit = {}) {
     });
 }
 
-export function registerUser(login: LoginData): Promise<Result<UserData>> {
-    return fetchJson("/users/", {
+export function registerUser(user: RegisterData): Promise<Result<UserData>> {
+    return fetchJson("/users", {
         method: "POST",
-        body: JSON.stringify(login),
+        body: JSON.stringify(user),
     });
 }
 
@@ -71,7 +78,6 @@ export function getVotes(): Promise<Vote[]> {
 }
 
 export function createVote(vote: Omit<Vote, "id" | "created">): Promise<Vote> {
-    console.log(vote)
     return fetchJson("/votes", {
         method: "POST",
         body: JSON.stringify(vote),
@@ -80,6 +86,6 @@ export function createVote(vote: Omit<Vote, "id" | "created">): Promise<Vote> {
 
 export function quote() {
     return fetchJson("/quote", {
-        method: "POST"
+        method: "POST",
     });
 }

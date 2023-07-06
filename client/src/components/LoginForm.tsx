@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LoginData } from "../types";
+import { LoginData, RegisterData } from "../types";
 
 // https://emailregex.com/
 const RE_EMAIL =
@@ -11,7 +11,7 @@ const RE_PASSWORD =
     /^[a-zA-Z0-9!?.,;:\-_]*(?=.{6,})(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!?.,;:\-_])[a-zA-Z0-9!?.,;:\-_]*$/;
 
 interface LoginFormProps {
-    onSubmit?: (login: LoginData) => void;
+    onSubmit?: (data: LoginData & RegisterData) => void;
     omitNickname?: boolean;
     confirmPassword?: boolean;
     disabled?: boolean;
@@ -31,7 +31,7 @@ export default function LoginForm({
     const [passwordConfirm, setPasswordConfirm] = useState("");
 
     const [errors, setErrors] = useState({
-        userName: null as null | string,
+        email: null as null | string,
         nickname: null as null | string,
         password: null as null | string,
         passwordConfirm: null as null | string,
@@ -80,7 +80,12 @@ export default function LoginForm({
         event.preventDefault();
 
         if (onSubmitProp && isValid) {
-            onSubmitProp({ userName: email, nickname, password });
+            onSubmitProp({
+                email,
+                nickname,
+                password,
+                userName: email,
+            });
         }
     };
 

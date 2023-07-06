@@ -4,6 +4,12 @@ export interface UserData {
     nickname: string;
 }
 
+export interface RegisterData {
+    email: string;
+    nickname: string;
+    password: string;
+}
+
 export interface LoginData {
     userName: string;
     password: string;
