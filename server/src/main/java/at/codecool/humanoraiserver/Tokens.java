@@ -4,6 +4,8 @@ import at.codecool.humanoraiserver.services.UserDetailsImpl;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -13,10 +15,11 @@ import java.security.InvalidParameterException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.Optional;
 
 @Component
 public class Tokens {
+
+    private final Log log = LogFactory.getLog(Tokens.class);
 
     private final SecretKey secret;
 
@@ -49,7 +52,7 @@ public class Tokens {
             var username = (String) claims.get("userName");
             return new UserDetailsImpl(username, token);
         } catch (JwtException jwtE) {
-            jwtE.printStackTrace();
+            log.debug("Validation of JWT token " + token + " failed.", jwtE);
             return null;
         }
     }
