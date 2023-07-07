@@ -5,6 +5,7 @@ import {
     RegisterData,
     Result,
     UserData,
+    Vote,
     VoteAndQuoteText,
 } from "./types";
 
@@ -67,7 +68,7 @@ export function getQuotes(): Promise<Quote[]> {
     return fetchJson("/quotes");
 }
 
-export function createQuote(quote: PostVoteRequest): Promise<Quote> {
+export function createQuote(quote: Omit<Quote, "id">): Promise<Quote> {
     return fetchJson("/quotes", {
         method: "POST",
         body: JSON.stringify(quote),
@@ -78,7 +79,7 @@ export function getVotes(): Promise<VoteAndQuoteText[]> {
     return fetchJson("/votes");
 }
 
-export function createVote(vote: Omit<Vote, "id" | "created">): Promise<Vote> {
+export function createVote(vote: PostVoteRequest): Promise<Vote> {
     return fetchJson("/votes", {
         method: "POST",
         body: JSON.stringify(vote),

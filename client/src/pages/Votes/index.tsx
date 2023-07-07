@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { getVotes } from "../../api";
 import { formatDateTime } from "../../formatters";
-import { Vote } from "../../types";
+import { VoteAndQuoteText } from "../../types";
 
 export default function Votes() {
-    const [votes, setVotes] = useState<Vote[]>([]);
+    const [votes, setVotes] = useState<VoteAndQuoteText[]>([]);
 
     useEffect(() => {
         getVotes().then((votes) => setVotes(votes));

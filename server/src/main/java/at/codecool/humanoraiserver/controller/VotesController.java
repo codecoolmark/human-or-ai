@@ -5,7 +5,6 @@ import at.codecool.humanoraiserver.repositories.QuotesRepository;
 import at.codecool.humanoraiserver.repositories.UsersRepository;
 import at.codecool.humanoraiserver.services.VoteAndQuoteText;
 import at.codecool.humanoraiserver.services.VotesService;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,14 +32,9 @@ public class VotesController {
     }
 
     @PostMapping("/votes")
-    public Vote postVote(@RequestBody PostVoteRequest voteRequest, Authentication authentication, HttpServletResponse response) {
-        try {
-            var quote = quotesRepository.findById(voteRequest.getQuoteId()).orElseThrow();
-            var user = usersRepository.findByEmail(authentication.getName()).orElseThrow();
-            return this.votesService.createVote(quote, user, voteRequest.isReal());
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return null;
-        }
+    public Vote postVote(@RequestBody PostVoteRequest voteRequest, Authentication authentication) {
+        var quote = quotesRepository.findById(voteRequest.getQuoteId()).orElseThrow();
+        var user = usersRepository.findByEmail(authentication.getName()).orElseThrow();
+        return this.votesService.createVote(quote, user, voteRequest.isReal());
     }
 }

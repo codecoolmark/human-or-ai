@@ -1,16 +1,10 @@
 import { useEffect, useState } from "react";
 import * as api from "../../api";
-import { useStore } from "../../store";
 import { Quote } from "../../types";
 import QuoteContainer from "./QuoteContainer";
 
 export default function Vote() {
     const [quote, setQuote] = useState<Quote | null>(null);
-    const userId = useStore((state) => state.user?.id);
-
-    if (userId === undefined) {
-        throw new Error("Expected user to be logged in");
-    }
 
     const fetchQuote = () => {
         api.quote()
@@ -28,7 +22,6 @@ export default function Vote() {
         api.createVote({
             quoteId: quote.id,
             isReal: true,
-            userId,
         }).then(() => fetchQuote());
     };
 
@@ -36,7 +29,6 @@ export default function Vote() {
         api.createVote({
             quoteId: quote.id,
             isReal: false,
-            userId,
         }).then(() => fetchQuote());
     };
 
