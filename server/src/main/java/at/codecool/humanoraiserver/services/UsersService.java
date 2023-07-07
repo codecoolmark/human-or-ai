@@ -1,6 +1,7 @@
 package at.codecool.humanoraiserver.services;
 
 import java.util.Collection;
+import java.util.Random;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,6 +35,7 @@ public class UsersService implements UserDetailsService {
         final User user = new User();
         user.setEmail(data.getEmail());
         user.setNickname(data.getNickname());
+        user.setQuoteSeed(new Random().nextLong());
 
         final String hash = passwordEncoder.encode(data.getPassword());
         user.setPasswordHash(hash);

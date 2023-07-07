@@ -33,9 +33,6 @@ public class QuotesService {
 
     public Optional<Quote> nextQuoteForUser(User forUser) {
         var seed = forUser.getQuoteSeed();
-        if (seed == null) {
-            seed = System.currentTimeMillis();
-        }
 
         var randomGenerator = new Random(seed);
         var quotes = new ArrayList<>(quotesRepository.filterOpenQuotesForUser(forUser));
