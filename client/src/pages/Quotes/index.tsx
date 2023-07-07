@@ -6,8 +6,8 @@ import { Quote } from "../../types";
 
 export default function QuotesPage() {
     const [quotes, setQuotes] = useState<Quote[]>([]);
-
     const [voted, setVoted] = useState<number[]>([]);
+
 
     useEffect(() => {
         getQuotes().then((quotes) => setQuotes(quotes));

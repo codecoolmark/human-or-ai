@@ -7,8 +7,7 @@ export default function Navigation() {
     const clearUser = useStore((state) => state.clearUser);
 
     const onLogout = () => {
-        clearUser();
-        logoutUser();
+        logoutUser().then(() => clearUser());
     };
 
     return (
@@ -18,8 +17,8 @@ export default function Navigation() {
                 <>
                     <Link to="/vote">Vote</Link>
                     <Link to="/votes">Votes</Link>
-                    <Link to="/quotes">Quotes</Link>
-                    <Link to="/quotes/new">New Quote</Link>
+                    { user.isAdmin && <Link to="/quotes">Quotes</Link> }
+                    { user.isAdmin && <Link to="/quotes/new">New Quote</Link> }
                     <button onClick={onLogout}>Logout</button>
                     <div>{user.nickname}</div>
                 </>

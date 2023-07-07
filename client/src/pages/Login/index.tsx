@@ -13,13 +13,7 @@ export default function LoginPage() {
     const [error, setError] = useState<string | null>(null);
 
     const onLogin = async (login: LoginData) => {
-        try {
-            const user = await loginUser(login);
-            setUser(user);
-        } catch (err: any) {
-            console.error(err);
-            setError(err?.message || JSON.stringify(err));
-        }
+        loginUser(login).then(user => setUser(user)).catch(error => setError(error))
     };
 
     return (

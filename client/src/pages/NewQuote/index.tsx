@@ -8,6 +8,7 @@ function toISO(dateTime: string): string {
 }
 
 export default function NewQuote() {
+
     const navigate = useNavigate();
 
     const [text, setText] = useState("");

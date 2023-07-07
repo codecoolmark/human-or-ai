@@ -1,15 +1,16 @@
 package at.codecool.humanoraiserver.controller;
 
 import at.codecool.humanoraiserver.model.User;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class GetSessionResponse {
+public class SessionResponse {
     private final String email;
 
     private final String nickname;
 
     private final boolean isAdmin;
 
-    public GetSessionResponse(User user) {
+    public SessionResponse(User user) {
         this.email = user.getEmail();
         this.nickname = user.getNickname();
         this.isAdmin = user.isAdmin();
@@ -23,6 +24,7 @@ public class GetSessionResponse {
         return nickname;
     }
 
+    @JsonProperty("isAdmin")
     public boolean isAdmin() {
         return isAdmin;
     }

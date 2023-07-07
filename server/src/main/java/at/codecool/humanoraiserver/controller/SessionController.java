@@ -1,6 +1,5 @@
 package at.codecool.humanoraiserver.controller;
 
-import at.codecool.humanoraiserver.model.User;
 import at.codecool.humanoraiserver.services.UsersService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,18 +24,18 @@ public class SessionController {
     }
 
     @GetMapping("/session")
-    public GetSessionResponse getSession(Authentication authentication) {
+    public SessionResponse getSession(Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
             var user = usersService.findUserByEmail(authentication.getName());
-            return new GetSessionResponse(user);
+            return new SessionResponse(user);
         } else {
             throw new InsufficientAuthenticationException("Not authenticated");
         }
     }
 
     @PostMapping("/session")
-    public User postSession(Authentication authentication) {
-        return usersService.findUserByEmail(authentication.getName());
+    public SessionResponse postSession(Authentication authentication) {
+        return new SessionResponse(usersService.findUserByEmail(authentication.getName()));
     }
 
     @DeleteMapping("/session")
