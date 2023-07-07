@@ -36,6 +36,7 @@ public class UsersService implements UserDetailsService {
         user.setEmail(data.getEmail());
         user.setNickname(data.getNickname());
         user.setQuoteSeed(new Random().nextLong());
+        user.setAdmin(false);
 
         final String hash = passwordEncoder.encode(data.getPassword());
         user.setPasswordHash(hash);

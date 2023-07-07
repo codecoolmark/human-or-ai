@@ -4,7 +4,7 @@ import {
     Quote,
     RegisterData,
     Result,
-    UserData,
+    GetSessionResponse,
     Vote,
     VoteAndQuoteText,
 } from "./types";
@@ -40,14 +40,14 @@ function fetchVoid(endpoint: string, options: RequestInit = {}) {
     });
 }
 
-export function registerUser(user: RegisterData): Promise<Result<UserData>> {
+export function registerUser(user: RegisterData): Promise<Result<GetSessionResponse>> {
     return fetchJson("/users", {
         method: "POST",
         body: JSON.stringify(user),
     });
 }
 
-export function loginUser(login: LoginData): Promise<UserData> {
+export function loginUser(login: LoginData): Promise<GetSessionResponse> {
     return fetchJson("/session", {
         method: "POST",
         body: JSON.stringify(login),
@@ -60,7 +60,7 @@ export function logoutUser(): Promise<void> {
     });
 }
 
-export function currentUser(): Promise<UserData | null> {
+export function currentUser(): Promise<GetSessionResponse | null> {
     return fetchJson("/session");
 }
 

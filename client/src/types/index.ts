@@ -1,7 +1,7 @@
-export interface UserData {
-    id: number;
+export interface GetSessionResponse {
     email: string;
     nickname: string;
+    isAdmin: boolean;
 }
 
 export interface RegisterData {

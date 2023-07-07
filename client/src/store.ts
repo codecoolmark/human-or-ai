@@ -1,11 +1,11 @@
 import { create } from "zustand";
-import { UserData } from "./types";
+import { GetSessionResponse } from "./types";
 import * as api from "./api";
 
 export interface Store {
-    user: UserData | null;
+    user: GetSessionResponse | null;
 
-    setUser: (user: UserData) => void;
+    setUser: (user: GetSessionResponse) => void;
     clearUser: () => void;
 }
 

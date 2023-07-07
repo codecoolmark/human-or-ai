@@ -41,9 +41,10 @@ public class WebSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authenticationManager(authenticationManager)
                 .authorizeHttpRequests(
-                    requests -> requests.requestMatchers(
-                        "/session", "/users")
-                    .permitAll().anyRequest().authenticated())
+                    requests -> requests
+                        .requestMatchers("/session", "/users").permitAll()
+                        .requestMatchers("/quotes").hasAuthority("isAdmin")
+                        .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .rememberMe(remember -> remember.rememberMeServices(rememberMeServices))
                 .build();

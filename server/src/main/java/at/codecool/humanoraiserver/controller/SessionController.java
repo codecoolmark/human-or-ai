@@ -25,9 +25,10 @@ public class SessionController {
     }
 
     @GetMapping("/session")
-    public User getSession(Authentication authentication) {
+    public GetSessionResponse getSession(Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
-            return usersService.findUserByEmail(authentication.getName());
+            var user = usersService.findUserByEmail(authentication.getName());
+            return new GetSessionResponse(user);
         } else {
             throw new InsufficientAuthenticationException("Not authenticated");
         }

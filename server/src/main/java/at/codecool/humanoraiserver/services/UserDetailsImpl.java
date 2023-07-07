@@ -13,19 +13,25 @@ public class UserDetailsImpl implements UserDetails {
     private final String userName;
     private final String password;
 
-    public UserDetailsImpl(String userName, String password) {
+    private final boolean isAdmin;
+
+    public UserDetailsImpl(String userName, String password, boolean isAdmin) {
         this.userName = userName;
         this.password = password;
+        this.isAdmin = isAdmin;
     }
 
     public UserDetailsImpl(User user) {
-       this(user.getEmail(), user.getPasswordHash());
+       this(user.getEmail(), user.getPasswordHash(), user.isAdmin());
     }
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("User"));
+        if (isAdmin) {
+            return List.of(new SimpleGrantedAuthority("isAdmin"));
+        }
+        return List.of();
     }
 
     @Override

@@ -35,8 +35,11 @@ public class Tokens {
     }
 
     public String generateToken(UserDetails userDetails) {
+        var isAdmin = userDetails.getAuthorities().stream().anyMatch(grantedAuthority ->
+                grantedAuthority.getAuthority().equals("isAdmin"));
         return Jwts.builder()
                 .claim("userName", userDetails.getUsername())
+                .claim("isAdmin", isAdmin)
                 .setExpiration(Date.from(ChronoUnit.SECONDS.addTo(Instant.now(), this.timeout)))
                 .signWith(this.secret)
                 .compact();
@@ -50,7 +53,8 @@ public class Tokens {
                     .parseClaimsJws(token)
                     .getBody();
             var username = (String) claims.get("userName");
-            return new UserDetailsImpl(username, token);
+            var isAdmin = claims.containsKey("isAdmin") && (Boolean) claims.get("isAdmin");
+            return new UserDetailsImpl(username, token, isAdmin);
         } catch (JwtException jwtE) {
             log.debug("Validation of JWT token " + token + " failed.", jwtE);
             return null;

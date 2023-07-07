@@ -13,8 +13,9 @@ public class User {
     private String email;
     private String nickname;
     private String passwordHash;
-
     private Long quoteSeed;
+
+    private boolean isAdmin;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,5 +57,13 @@ public class User {
 
     public void setQuoteSeed(Long quoteSeed) {
         this.quoteSeed = quoteSeed;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
     }
 }
