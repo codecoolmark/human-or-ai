@@ -1,46 +1,42 @@
 import { useState } from "react";
 import { registerUser } from "../../api";
-import LoginForm from "../../components/LoginForm";
-import { LoginData, RegisterData, GetSessionResponse } from "../../types";
+import RegisterForm from "./RegisterForm";
+import { RegisterData } from "../../types";
+import { useNavigate } from "react-router";
 
 export default function RegisterPage() {
     const [registerError, setRegisterError] = useState<string | null>(null);
-    const [registeredUser, setRegisteredUser] = useState<GetSessionResponse | null>(null);
+    const [disableRegistration, setDisableRegistration] = useState(false);
+    const navigate = useNavigate();
 
     const onRegister = async (data: RegisterData) => {
-        try {
-            const user = await registerUser(data);
-            if (user.isOk) {
-                setRegisteredUser(user.value);
-            } else {
-                setRegisterError(user.error);
-            }
-        } catch (err: any) {
-            console.error(err);
-            setRegisterError(err?.message || JSON.stringify(err));
-        }
+        setDisableRegistration(true)
+        registerUser(data)
+            .then(registerResult => {
+                if (registerResult.isOk) {
+                    navigate("/")
+                } else {
+                    setRegisterError(registerResult.error);
+                    setDisableRegistration(false);
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                setRegisterError("Couldn't create account. Please try again later.")
+            })
     };
 
     return (
         <main>
             {registerError && (
-                <p className="error">An error occurred: {registerError}</p>
-            )}
-
-            {registeredUser && (
-                <p className="success">
-                    Successfully registered{" "}
-                    <strong>{registeredUser.email}</strong>
-                </p>
+                <p className="error">{registerError}</p>
             )}
 
             <h1>Register Account</h1>
 
-            <LoginForm
+            <RegisterForm
                 onSubmit={onRegister}
-                confirmPassword
-                disabled={!!registeredUser}
-                submitLabel="Register"
+                disabled={disableRegistration}
             />
         </main>
     );

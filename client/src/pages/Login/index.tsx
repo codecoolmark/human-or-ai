@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { shallow } from "zustand/shallow";
 import { loginUser } from "../../api";
-import LoginForm from "../../components/LoginForm";
+import LoginForm from "./LoginForm";
 import { useStore } from "../../store";
 import { LoginData } from "../../types";
 
@@ -10,15 +10,25 @@ export default function LoginPage() {
         (state) => [state.user, state.setUser],
         shallow,
     );
+
+    const [disableLogin, setDisableLogin] = useState(false)
+
     const [error, setError] = useState<string | null>(null);
 
     const onLogin = async (login: LoginData) => {
-        loginUser(login).then(user => setUser(user)).catch(error => setError(error))
+        setDisableLogin(true)
+        loginUser(login)
+            .then(user => setUser(user))
+            .catch(error => {
+                setDisableLogin(false);
+                console.error(error)
+                setError("Login failed. Check your email address and password and try again.");
+            })
     };
 
     return (
         <main>
-            {error && <p className="error">An error occurred: {error}</p>}
+            {error && <p className="error">{error}</p>}
 
             {user && (
                 <p className="success">
@@ -30,9 +40,7 @@ export default function LoginPage() {
 
             <LoginForm
                 onSubmit={onLogin}
-                disabled={!!user}
-                submitLabel="Login"
-                omitNickname
+                disabled={disableLogin}
             />
         </main>
     );
