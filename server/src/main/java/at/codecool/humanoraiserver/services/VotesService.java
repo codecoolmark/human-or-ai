@@ -6,6 +6,7 @@ import at.codecool.humanoraiserver.model.Vote;
 import at.codecool.humanoraiserver.repositories.VotesRepository;
 
 import java.time.Instant;
+import java.util.Collection;
 
 import org.springframework.stereotype.Service;
 
@@ -17,8 +18,8 @@ public class VotesService {
         voteRepository = newVoteRepository;
     }
 
-    public Iterable<Vote> getVotes() {
-        return voteRepository.findAll();
+    public Collection<VoteAndQuoteText> getVotesForUser(User user) {
+        return voteRepository.filterVoteAndQuoteTextsForUser(user);
     }
 
     public Vote createVote(Quote quote, User forUser, boolean isReal) {

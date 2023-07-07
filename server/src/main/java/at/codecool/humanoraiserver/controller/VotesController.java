@@ -3,6 +3,7 @@ package at.codecool.humanoraiserver.controller;
 import at.codecool.humanoraiserver.model.Vote;
 import at.codecool.humanoraiserver.repositories.QuotesRepository;
 import at.codecool.humanoraiserver.repositories.UsersRepository;
+import at.codecool.humanoraiserver.services.VoteAndQuoteText;
 import at.codecool.humanoraiserver.services.VotesService;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -26,8 +27,9 @@ public class VotesController {
     }
 
     @GetMapping("/votes")
-    public Iterable<Vote> getVotes() {
-        return this.votesService.getVotes();
+    public Iterable<VoteAndQuoteText> getVotes(Authentication authentication) {
+        var user = usersRepository.findByEmail(authentication.getName()).orElseThrow();
+        return this.votesService.getVotesForUser(user);
     }
 
     @PostMapping("/votes")

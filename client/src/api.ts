@@ -1,10 +1,11 @@
 import {
     LoginData,
+    PostVoteRequest,
     Quote,
     RegisterData,
     Result,
     UserData,
-    Vote,
+    VoteAndQuoteText,
 } from "./types";
 
 const server = new URL(import.meta.env.VITE_SERVER_URL);
@@ -66,14 +67,14 @@ export function getQuotes(): Promise<Quote[]> {
     return fetchJson("/quotes");
 }
 
-export function createQuote(quote: Omit<Quote, "id">): Promise<Quote> {
+export function createQuote(quote: PostVoteRequest): Promise<Quote> {
     return fetchJson("/quotes", {
         method: "POST",
         body: JSON.stringify(quote),
     });
 }
 
-export function getVotes(): Promise<Vote[]> {
+export function getVotes(): Promise<VoteAndQuoteText[]> {
     return fetchJson("/votes");
 }
 

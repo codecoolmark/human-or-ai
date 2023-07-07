@@ -22,10 +22,14 @@ export interface Quote {
     expires: string;
 }
 
-export interface Vote {
-    id: number;
-    quoteId: number;
-    userId: number;
+export interface PostVoteRequest {
+    quoteId: number,
+    isReal: boolean,
+    userId: number
+}
+
+export interface VoteAndQuoteText {
+    text: string;
     isReal: boolean;
     created: string;
 }
