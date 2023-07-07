@@ -29,7 +29,7 @@ export default function LoginForm({ onSubmit: onSubmitProp, disabled }: LoginFor
     return (
         <form action="#" onSubmit={onSubmit}>
             <label>
-                Email
+                <div>Email</div>
                 <ValidatedInput
                     inputType="email"
                     onValidInput={setEmail}
@@ -39,7 +39,7 @@ export default function LoginForm({ onSubmit: onSubmitProp, disabled }: LoginFor
             </label>
 
             <label>
-                Password
+                <div>Password</div>
                 <ValidatedInput
                     inputType="password"
                     onValidInput={setPassword}
@@ -48,9 +48,11 @@ export default function LoginForm({ onSubmit: onSubmitProp, disabled }: LoginFor
                 />
             </label>
 
-            <button type="submit" disabled={disabled || !isValid}>
-                Login
-            </button>
+            <div className="button-panel">
+                <button type="submit" disabled={disabled || !isValid}>
+                    Login
+                </button>
+            </div>
         </form>
     );
 }

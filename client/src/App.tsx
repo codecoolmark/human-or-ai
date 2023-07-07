@@ -2,7 +2,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import LandingPage from "./pages/Landing";
 import LoginPage from "./pages/Login";
 import NewQuote from "./pages/NewQuote";
-import QuotesPage from "./pages/Quotes";
+import Quotes from "./pages/Quotes";
 import RegisterPage from "./pages/Register";
 import VotePage from "./pages/Vote";
 import VotesPage from "./pages/Votes";
@@ -31,7 +31,7 @@ export default function App() {
                 element: <CheckLogin 
                     LoggedIn={
                         <AdminOnly>
-                            <QuotesPage></QuotesPage>
+                            <Quotes></Quotes>
                         </AdminOnly>} 
                     LoggedOut={<LoginPage />} />
             }, {

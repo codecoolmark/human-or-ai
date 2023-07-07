@@ -32,7 +32,7 @@ export default function RegisterPage() {
                 <p className="error">{registerError}</p>
             )}
 
-            <h1>Register Account</h1>
+            <h1>Register a new Account</h1>
 
             <RegisterForm
                 onSubmit={onRegister}

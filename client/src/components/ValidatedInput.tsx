@@ -26,8 +26,8 @@ export default function ValidatedInput({ inputType, onValidInput: onInput, valid
         setShowValidationMessage(true);
     }
 
-    return <span>
+    return <div>
         <input type={inputType} disabled={disabled} onInput={onInputListener} onBlur={onBlurListener}/>
         {showValidationMessage && <span className="error">{validationMessage}</span> }
-    </span>
+    </div>
 }

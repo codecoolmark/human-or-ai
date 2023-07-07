@@ -26,7 +26,7 @@ export default function Votes() {
                         {votes.map((vote, index) => (
                             <tr key={index}>
                                 <td>{vote.text}</td>
-                                <td>{vote.isReal ? "Human" : "AI"}</td>
+                                <td>{vote.isReal ? <span className="human">Human</span> : <span className="ai">Ai</span>}</td>
                                 <td>{formatDateTime(vote.created)}</td>
                             </tr>
                         ))}

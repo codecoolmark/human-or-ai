@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { formatDateTime } from "../../formatters";
 import { Quote } from "../../types";
 
-export default function QuotesPage() {
+export default function Quotes() {
     const [quotes, setQuotes] = useState<Quote[]>([]);
 
 
@@ -28,7 +28,7 @@ export default function QuotesPage() {
                         {quotes.map((quote, index) => (
                             <tr key={index}>
                                 <td>{quote.text}</td>
-                                <td>{quote.isReal ? "Human" : "AI"}</td>
+                                <td>{quote.isReal ? <span className="human">Human</span> : <span className="ai">Ai</span>}</td>
                                 <td>{formatDateTime(quote.expires)}</td>
                             </tr>
                         ))}

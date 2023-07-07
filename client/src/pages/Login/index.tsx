@@ -4,6 +4,8 @@ import { loginUser } from "../../api";
 import LoginForm from "./LoginForm";
 import { useStore } from "../../store";
 import { LoginData } from "../../types";
+import { Link } from "react-router-dom";
+import OnlyUser from "../../components/OnlyUser";
 
 export default function LoginPage() {
     const [user, setUser] = useStore(
@@ -28,13 +30,12 @@ export default function LoginPage() {
 
     return (
         <main>
-            {error && <p className="error">{error}</p>}
 
-            {user && (
-                <p className="success">
-                    Logged in as <strong>{user.email}</strong>
+            <OnlyUser>
+                <p>
+                    You are already logged in as <strong>{user?.email}</strong>
                 </p>
-            )}
+            </OnlyUser>
 
             <h1>Login</h1>
 
@@ -42,6 +43,9 @@ export default function LoginPage() {
                 onSubmit={onLogin}
                 disabled={disableLogin}
             />
+            {error && <p className="error">{error}</p>}
+
+            <p>No account? Create one <Link to="/register">here</Link></p>
         </main>
     );
 }
