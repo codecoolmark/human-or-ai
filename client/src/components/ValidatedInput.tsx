@@ -4,30 +4,43 @@ interface ValidatedInputProps {
     inputType: string;
     onValidInput: (input: string) => void;
     validateInput: (input: string) => string | null;
-    disabled: boolean
+    disabled: boolean;
 }
 
-export default function ValidatedInput({ inputType, onValidInput: onInput, validateInput, disabled }: ValidatedInputProps) {
+export default function ValidatedInput({
+    inputType,
+    onValidInput: onInput,
+    validateInput,
+    disabled,
+}: ValidatedInputProps) {
     const [showValidationMessage, setShowValidationMessage] = useState(false);
-    const [validationMessage, setValidationMessage] = useState(null as string | null);
+    const [validationMessage, setValidationMessage] = useState<string | null>(
+        null,
+    );
 
     const onInputListener = (event: React.ChangeEvent<HTMLInputElement>) => {
         const input = event.target.value;
-        const validationMessage = validateInput(input)
+        const validationMessage = validateInput(input);
         setValidationMessage(validationMessage);
 
         if (validationMessage === null) {
             onInput(input);
         }
-    }
+    };
 
-    const onBlurListener = () => {
-        console.log("onBlur")
-        setShowValidationMessage(true);
-    }
+    const onBlurListener = () => setShowValidationMessage(true);
 
-    return <div>
-        <input type={inputType} disabled={disabled} onInput={onInputListener} onBlur={onBlurListener}/>
-        {showValidationMessage && <span className="error">{validationMessage}</span> }
-    </div>
+    return (
+        <div>
+            <input
+                type={inputType}
+                disabled={disabled}
+                onInput={onInputListener}
+                onBlur={onBlurListener}
+            />
+            {showValidationMessage && (
+                <span className="error">{validationMessage}</span>
+            )}
+        </div>
+    );
 }
