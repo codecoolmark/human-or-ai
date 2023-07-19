@@ -7,8 +7,6 @@ import jakarta.persistence.Id;
 
 import java.time.Instant;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 @Entity
 public class Vote {
 

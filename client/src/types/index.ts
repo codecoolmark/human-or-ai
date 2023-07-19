@@ -23,20 +23,22 @@ export interface Quote {
 }
 
 export interface Vote {
-    id: number,
-    quoteId: number,
-    created: string,
-    isReal: boolean
+    id: number;
+    quoteId: number;
+    created: string;
+    isReal: boolean;
 }
 
 export interface PostVoteRequest {
-    quoteId: number,
-    isReal: boolean,
+    quoteId: number;
+    isReal: boolean;
 }
 
 export interface VoteAndQuoteText {
     text: string;
     isReal: boolean;
+    /** Is `null` if this quote has not yet been revealed */
+    isCorrect: boolean | null;
     created: string;
 }
 

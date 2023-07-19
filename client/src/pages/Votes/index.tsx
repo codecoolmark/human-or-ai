@@ -18,15 +18,31 @@ export default function Votes() {
                     <thead>
                         <tr>
                             <th>Quote</th>
-                            <th>Human or AI</th>
-                            <th>Date</th>
+                            <th>Your vote</th>
+                            <th>Are you correct?</th>
+                            <th>Date voted</th>
                         </tr>
                     </thead>
                     <tbody>
                         {votes.map((vote, index) => (
                             <tr key={index}>
                                 <td>{vote.text}</td>
-                                <td>{vote.isReal ? <span className="human">Human</span> : <span className="ai">Ai</span>}</td>
+                                <td>
+                                    {vote.isReal ? (
+                                        <span className="human">Human</span>
+                                    ) : (
+                                        <span className="ai">Ai</span>
+                                    )}
+                                </td>
+                                <td>
+                                    {vote.isCorrect === null ? (
+                                        <span>To be announced...</span>
+                                    ) : vote.isCorrect ? (
+                                        <span>Correct!</span>
+                                    ) : (
+                                        <span>Not yet correct</span>
+                                    )}
+                                </td>
                                 <td>{formatDateTime(vote.created)}</td>
                             </tr>
                         ))}
