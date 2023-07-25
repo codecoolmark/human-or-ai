@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import at.codecool.humanoraiserver.Result;
 import at.codecool.humanoraiserver.Tokens;
 import at.codecool.humanoraiserver.model.User;
 import at.codecool.humanoraiserver.services.UsersService;
@@ -31,8 +30,7 @@ public class UsersController {
     }
 
     @PostMapping("/users")
-    public Result<User> postUsers(@RequestBody PostUsersRequest userData, HttpServletResponse response) {
-        final Result<User> user = usersService.registerUser(userData);
-        return user;
+    public User postUsers(@RequestBody PostUsersRequest userData, HttpServletResponse response) {
+        return usersService.registerUser(userData);
     }
 }

@@ -1,16 +1,13 @@
 package at.codecool.humanoraiserver.services;
 
-import java.util.Collection;
 import java.util.Random;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import at.codecool.humanoraiserver.Result;
 import at.codecool.humanoraiserver.model.User;
 import at.codecool.humanoraiserver.controller.PostUsersRequest;
 import at.codecool.humanoraiserver.repositories.UsersRepository;
@@ -27,11 +24,7 @@ public class UsersService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Collection<User> getUsers() {
-        return usersRepository.findAll();
-    }
-
-    public Result<User> registerUser(PostUsersRequest data) {
+    public User registerUser(PostUsersRequest data) {
         final User user = new User();
         user.setEmail(data.getEmail());
         user.setNickname(data.getNickname());
@@ -41,11 +34,7 @@ public class UsersService implements UserDetailsService {
         final String hash = passwordEncoder.encode(data.getPassword());
         user.setPasswordHash(hash);
 
-        try {
-            return Result.of(this.usersRepository.save(user));
-        } catch (DataIntegrityViolationException err) {
-            return Result.error("Failed to save new user; user email may exist already");
-        }
+        return this.usersRepository.save(user);
     }
 
     public User findUserByEmail(String email) {
