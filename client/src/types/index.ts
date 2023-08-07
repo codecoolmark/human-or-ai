@@ -42,14 +42,18 @@ export interface VoteAndQuoteText {
     created: string;
 }
 
-export type Result<T> =
-    | {
-          isOk: true;
-          value: T;
-          error: null;
-      }
-    | {
-          isOk: false;
-          value: null;
-          error: string;
-      };
+export class ResponseError implements Error {
+    name = "RequestError";
+    message: string;
+    response: Response;
+
+    constructor(message: string, response: Response) {
+        this.message = message;
+        this.response = response;
+    }
+}
+
+export interface RegisterErrors {
+    isUsernameExists: boolean
+    isEmailExists: boolean
+}

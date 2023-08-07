@@ -1,93 +1,115 @@
 import {
-    LoginData,
-    PostVoteRequest,
-    Quote,
-    RegisterData,
-    Result,
-    GetSessionResponse,
-    Vote,
-    VoteAndQuoteText,
+  LoginData,
+  PostVoteRequest,
+  Quote,
+  RegisterData,
+  GetSessionResponse,
+  Vote,
+  VoteAndQuoteText,
+  ResponseError,
+  RegisterErrors,
 } from "./types";
 
 const server = new URL(import.meta.env.VITE_SERVER_URL);
 
 function fetchJson(endpoint: string, options: RequestInit = {}) {
-    return fetch(new URL(endpoint, server), {
-        method: "GET",
-        credentials: "include",
-        headers: {
-            "Content-Type": "application/json",
-            ...options.headers,
-        },
-        ...options,
-    }).then((response) => {
-        if (response.ok) {
-            return response.json();
-        }
-        console.error(response);
-        throw new Error("Something went wrong");
-    });
+  return fetch(new URL(endpoint, server), {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+    ...options,
+  }).then((response) => {
+    if (response.ok) {
+      return response.json();
+    }
+    throw new ResponseError("Server returned error response", response);
+  });
 }
 
 function fetchVoid(endpoint: string, options: RequestInit = {}) {
-    return fetch(new URL(endpoint, server), {
-        credentials: "include",
-        ...options,
-    }).then((res) => {
-        if (res.ok) return;
-        console.error(res);
-        throw new Error("Something went wrong");
-    });
+  return fetch(new URL(endpoint, server), {
+    credentials: "include",
+    ...options,
+  }).then((response) => {
+    if (response.ok) {
+      return response.json();
+    }
+    throw new ResponseError("Server returned error response", response);
+  });
 }
 
-export function registerUser(user: RegisterData): Promise<Result<GetSessionResponse>> {
-    return fetchJson("/users", {
-        method: "POST",
-        body: JSON.stringify(user),
-    });
+export async function registerUser(
+  user: RegisterData
+): Promise<GetSessionResponse & RegisterErrors> {
+  const response = await fetch(new URL("/users", server), {
+    credentials: "include",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(user),
+  });
+
+  const isValidResponse = response.ok || (response.status >= 400 && response.status <= 499);
+
+  if (isValidResponse) {
+
+    const responseData = await response.json();
+
+    if (response.ok) {
+      return responseData as GetSessionResponse;
+    } else {
+      return responseData as RegisterErrors;
+    }
+  }
+
+  throw new ResponseError("Request failed", response);
 }
 
 export function loginUser(login: LoginData): Promise<GetSessionResponse> {
-    return fetchJson("/session", {
-        method: "POST",
-        body: JSON.stringify(login),
-    });
+  return fetchJson("/session", {
+    method: "POST",
+    body: JSON.stringify(login),
+  });
 }
 
 export function logoutUser(): Promise<void> {
-    return fetchVoid("/session", {
-        method: "DELETE",
-    });
+  return fetchVoid("/session", {
+    method: "DELETE",
+  });
 }
 
 export function currentUser(): Promise<GetSessionResponse | null> {
-    return fetchJson("/session");
+  return fetchJson("/session");
 }
 
 export function getQuotes(): Promise<Quote[]> {
-    return fetchJson("/quotes");
+  return fetchJson("/quotes");
 }
 
 export function createQuote(quote: Omit<Quote, "id">): Promise<Quote> {
-    return fetchJson("/quotes", {
-        method: "POST",
-        body: JSON.stringify(quote),
-    });
+  return fetchJson("/quotes", {
+    method: "POST",
+    body: JSON.stringify(quote),
+  });
 }
 
 export function getVotes(): Promise<VoteAndQuoteText[]> {
-    return fetchJson("/votes");
+  return fetchJson("/votes");
 }
 
 export function createVote(vote: PostVoteRequest): Promise<Vote> {
-    return fetchJson("/votes", {
-        method: "POST",
-        body: JSON.stringify(vote),
-    });
+  return fetchJson("/votes", {
+    method: "POST",
+    body: JSON.stringify(vote),
+  });
 }
 
 export function quote(): Promise<Quote> {
-    return fetchJson("/quote", {
-        method: "POST",
-    });
+  return fetchJson("/quote", {
+    method: "POST",
+  });
 }
