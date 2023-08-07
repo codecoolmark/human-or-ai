@@ -1,17 +1,24 @@
 # Human or AI
 ## Development Setup
 __Backend:__
+Switch to the server folder
 ```
 cd server
-
-# Install dependencies:
+```
+install dependencies:
+```
 mvn install
-
-# Copy properties to `dev` profile properties:
+```
+and copy properties to `dev` profile properties:
+```
 cp src/main/resources/application.properties src/main/resources/application-dev.properties
-# Then adjust `application-dev.properties` variables for development...
+```
+Then adjust `application-dev.properties` variables for development...
 
-# Start server with `dev` profile:
+Download one of the models from [here](https://gpt4all.io/index.html) and adjust the path in your properties file.
+
+Start server with `dev` profile:
+```
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
