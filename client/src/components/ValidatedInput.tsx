@@ -1,4 +1,5 @@
 import { useState } from "react";
+import InputAndValidationMessage from "./InputAndValidationMessage";
 
 interface ValidatedInputProps {
     inputType: string;
@@ -13,34 +14,27 @@ export default function ValidatedInput({
     validateInput,
     disabled,
 }: ValidatedInputProps) {
-    const [showValidationMessage, setShowValidationMessage] = useState(false);
     const [validationMessage, setValidationMessage] = useState<string | null>(
         null,
     );
+    const [input, setInput] = useState<string>("");
 
-    const onInputListener = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const input = event.target.value;
+    const validate = () => {
         const validationMessage = validateInput(input);
         setValidationMessage(validationMessage);
-
         if (validationMessage === null) {
             onInput(input);
         }
+    }
+
+    const onChangeListener = (input: string) => {
+        setInput(input);
+        validate();
     };
 
-    const onBlurListener = () => setShowValidationMessage(true);
-
-    return (
-        <div>
-            <input
-                type={inputType}
-                disabled={disabled}
-                onInput={onInputListener}
-                onBlur={onBlurListener}
-            />
-            {showValidationMessage && (
-                <span className="error">{validationMessage}</span>
-            )}
-        </div>
-    );
+    return <InputAndValidationMessage 
+        inputType={inputType} 
+        disabled={disabled} 
+        onChange={onChangeListener} 
+        validationMessage={validationMessage} />
 }

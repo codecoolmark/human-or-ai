@@ -2,15 +2,20 @@ import { useState } from "react";
 import { RegisterData } from "../../types";
 import { validateEmailAdress, validateNickname, validatePassword } from "../../validations";
 import ValidatedInput from "../../components/ValidatedInput";
+import InputAndValidationMessage from "../../components/InputAndValidationMessage";
 
 interface RegisterFormProps {
     onSubmit?: (data: RegisterData) => void;
     disabled: boolean;
+    usedEmail: string | null;
+    usedNickname: string | null;
 }
 
-export default function RegisterForm({ onSubmit: onSubmitProp, disabled }: RegisterFormProps) {
+export default function RegisterForm({ onSubmit: onSubmitProp, disabled, usedEmail, usedNickname }: RegisterFormProps) {
     const [email, setEmail] = useState(null as string | null);
+    const [emailValidationMessage, setEmailValidationMessage] = useState<string | null>(null);
     const [nickname, setNickname] = useState(null as string | null);
+    const [nicknameValidationMessage, setNicknameValidationMessage] = useState<string | null>(null);
     const [password, setPassword] = useState(null as string | null);
     const [passwordConfirm, setPasswordConfirm] = useState(null as string | null);
 
@@ -28,24 +33,75 @@ export default function RegisterForm({ onSubmit: onSubmitProp, disabled }: Regis
         }
     };
 
+    const emailUsedMessage = "This email address used by an existing user.";
+
+    if (usedEmail != null && email === usedEmail && emailValidationMessage === null) {
+        setEmailValidationMessage(emailUsedMessage);
+    }
+
+    const nickNameUsedMessage = "This nickname is used by an existing user."
+
+    if (usedNickname != null && nickname === usedNickname && nicknameValidationMessage === null) {
+        setNicknameValidationMessage(nickNameUsedMessage);
+    }
+
+    const validateEmailInput = (email: string) => {
+        if (!validateEmailAdress(email)) {
+            return "Must be valid email.";
+        }
+        if (usedEmail !== null && email === usedEmail) {
+            return emailUsedMessage;
+        }
+
+        return null;
+    };
+    
+    const onEmailChange = (input: string) => {
+        const validationResult = validateEmailInput(input)
+        setEmailValidationMessage(validationResult);
+        if (validationResult != null) {
+            setEmail(input);
+        }
+    }
+
+    const validateNicknameInput = (nickname: string) => {
+        if (!validateNickname(nickname)) {
+            return "Nickname must be at least 2 characters long"
+        }
+
+        if (usedNickname !== null && nickname === usedNickname) {
+            return nickNameUsedMessage;
+        }
+
+        return null;
+    };
+
+    const onNicknameChange = (input: string) => {
+        const validationResult = validateNicknameInput(input);
+        setNicknameValidationMessage(validationResult);
+        if (validationResult == null) {
+            setNickname(input);
+        }
+    }
+
     return (
         <form action="#" onSubmit={onSubmit}>
             <label>
                 Email
-                <ValidatedInput
+                <InputAndValidationMessage
                     inputType="email"
-                    onValidInput={setEmail}
-                    validateInput={(email) => validateEmailAdress(email) ? null : "Must be valid email format"}
+                    onChange={onEmailChange}
+                    validationMessage={emailValidationMessage}
                     disabled={disabled}
                 />
             </label>
 
             <label>
                 Nickname
-                <ValidatedInput
+                <InputAndValidationMessage
                     inputType="text"
-                    onValidInput={setNickname}
-                    validateInput={(nickname) => validateNickname(nickname) ? null : "Nickname must be at least 2 characters long"}
+                    onChange={onNicknameChange}
+                    validationMessage={nicknameValidationMessage}
                     disabled={disabled}
                 />
             </label>

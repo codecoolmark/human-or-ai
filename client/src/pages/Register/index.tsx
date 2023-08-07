@@ -7,23 +7,28 @@ import { useNavigate } from "react-router";
 export default function RegisterPage() {
     const [registerError, setRegisterError] = useState<string | null>(null);
     const [disableRegistration, setDisableRegistration] = useState(false);
+    const [usedEmail, setUsedEmail] = useState<string | null>(null);
+    const [usedNickname, setUsedNickname] = useState<string | null>(null);
     const navigate = useNavigate();
 
     const onRegister = async (data: RegisterData) => {
         setDisableRegistration(true)
         registerUser(data)
-            .then(registerResult => {
-                if (registerResult.isOk) {
-                    navigate("/")
+            .then((response) => {
+                setDisableRegistration(false);
+                if (response.isUsernameExists === true) {
+                    setUsedNickname(data.nickname);
+                } else if (response.isEmailExists === true) {
+                    setUsedEmail(data.email);
                 } else {
-                    setRegisterError(registerResult.error);
-                    setDisableRegistration(false);
+                    navigate("/");
                 }
+                
             })
             .catch(error => {
                 console.error(error);
                 setRegisterError("Couldn't create account. Please try again later.")
-            })
+            });
     };
 
     return (
@@ -37,6 +42,8 @@ export default function RegisterPage() {
             <RegisterForm
                 onSubmit={onRegister}
                 disabled={disableRegistration}
+                usedEmail={usedEmail}
+                usedNickname={usedNickname}
             />
         </main>
     );
