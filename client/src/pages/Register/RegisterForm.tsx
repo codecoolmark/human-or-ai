@@ -90,7 +90,7 @@ export default function RegisterForm({ onSubmit: onSubmitProp, disabled, usedEma
                 Email
                 <InputAndValidationMessage
                     inputType="email"
-                    onChange={onEmailChange}
+                    processInput={onEmailChange}
                     validationMessage={emailValidationMessage}
                     disabled={disabled}
                 />
@@ -100,7 +100,7 @@ export default function RegisterForm({ onSubmit: onSubmitProp, disabled, usedEma
                 Nickname
                 <InputAndValidationMessage
                     inputType="text"
-                    onChange={onNicknameChange}
+                    processInput={onNicknameChange}
                     validationMessage={nicknameValidationMessage}
                     disabled={disabled}
                 />
@@ -126,9 +126,11 @@ export default function RegisterForm({ onSubmit: onSubmitProp, disabled, usedEma
                 />
             </label>
 
-            <button type="submit" disabled={disabled || !isValid}>
-                Register
-            </button>
+            <div className="button-panel">
+                <button type="submit" disabled={disabled || !isValid}>
+                    Register
+                </button>
+            </div>
         </form>
     );
 }

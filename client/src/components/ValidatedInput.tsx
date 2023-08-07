@@ -35,6 +35,6 @@ export default function ValidatedInput({
     return <InputAndValidationMessage 
         inputType={inputType} 
         disabled={disabled} 
-        onChange={onChangeListener} 
+        processInput={onChangeListener} 
         validationMessage={validationMessage} />
 }
