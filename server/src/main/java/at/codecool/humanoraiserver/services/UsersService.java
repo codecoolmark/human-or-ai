@@ -2,6 +2,7 @@ package at.codecool.humanoraiserver.services;
 
 import java.util.Random;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,7 +25,7 @@ public class UsersService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User registerUser(PostUsersRequest data) {
+    public CreateUserResult registerUser(PostUsersRequest data) {
         final User user = new User();
         user.setEmail(data.getEmail());
         user.setNickname(data.getNickname());
@@ -34,7 +35,18 @@ public class UsersService implements UserDetailsService {
         final String hash = passwordEncoder.encode(data.getPassword());
         user.setPasswordHash(hash);
 
-        return this.usersRepository.save(user);
+        try {
+            final User savedUser = this.usersRepository.save(user);
+            return new CreateUserResult(savedUser);
+        } catch (DataIntegrityViolationException e) {
+            // at this point we only know that either the username or the email is used already
+            // hence we have to find out which one is a duplicate
+
+            var userByEmail = usersRepository.findByEmail(user.getEmail());
+            var userByNickname = usersRepository.findUserByNickname(user.getNickname());
+
+            return new CreateUserResult(userByNickname.isPresent(), userByEmail.isPresent());
+        }
     }
 
     public User findUserByEmail(String email) {
