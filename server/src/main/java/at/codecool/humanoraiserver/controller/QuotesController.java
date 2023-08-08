@@ -32,7 +32,7 @@ public class QuotesController {
     }
 
     @PostMapping("/quotes/generate")
-    public String postQuoteGenerate() {
-        return this.quoteGenerator.generateQuote();
+    public PostQuotesGenerateResponse postQuoteGenerate() {
+        return new PostQuotesGenerateResponse(this.quoteGenerator.generateQuote());
     }
 }
