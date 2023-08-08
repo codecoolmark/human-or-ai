@@ -32,7 +32,7 @@ public class QuotesController {
     }
 
     @PostMapping("/quotes/generate")
-    public PostQuotesGenerateResponse postQuoteGenerate() {
+    public PostQuotesGenerateResponse postQuoteGenerate() throws InterruptedException {
         return new PostQuotesGenerateResponse(this.quoteGenerator.generateQuote());
     }
 }
