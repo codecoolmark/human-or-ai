@@ -56,24 +56,26 @@ export async function registerUser(
   const isValidResponse = response.ok || (response.status >= 400 && response.status <= 499);
 
   if (isValidResponse) {
-
-    const responseData = await response.json();
-
-    if (response.ok) {
-      return responseData as GetSessionResponse;
-    } else {
-      return responseData as RegisterErrors;
-    }
+    return await response.json();
   }
 
   throw new ResponseError("Request failed", response);
 }
 
-export function loginUser(login: LoginData): Promise<GetSessionResponse> {
-  return fetchJson("/session", {
+export async function loginUser(login: LoginData): Promise<GetSessionResponse | null> {
+  const response = await fetch(new URL("/session", server), {
     method: "POST",
     body: JSON.stringify(login),
+    credentials: "include",
   });
+
+  if (response.ok) {
+    return await response.json();
+  } else if (response.status === 403) {
+    return null;
+  }
+
+  throw new ResponseError("Request failed", response);
 }
 
 export function logoutUser(): Promise<void> {

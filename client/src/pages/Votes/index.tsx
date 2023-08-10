@@ -2,13 +2,19 @@ import { useEffect, useState } from "react";
 import { getVotes } from "../../api";
 import { formatDateTime } from "../../formatters";
 import { VoteAndQuoteText } from "../../types";
+import { useStore } from "../../store";
+import { shallow } from "zustand/shallow";
 
 export default function Votes() {
     const [votes, setVotes] = useState<VoteAndQuoteText[]>([]);
+    const [setException] = useStore(
+        (state) => [state.setException],
+        shallow,
+    );
 
     useEffect(() => {
-        getVotes().then((votes) => setVotes(votes));
-    }, []);
+        getVotes().then((votes) => setVotes(votes)).catch(setException);
+    }, [setException]);
 
     return (
         <main>

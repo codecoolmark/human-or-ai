@@ -8,8 +8,8 @@ import { Link } from "react-router-dom";
 import OnlyUser from "../../components/OnlyUser";
 
 export default function LoginPage() {
-    const [user, setUser] = useStore(
-        (state) => [state.user, state.setUser],
+    const [user, setUser, setException] = useStore(
+        (state) => [state.user, state.setUser, state.setException],
         shallow,
     );
 
@@ -17,15 +17,18 @@ export default function LoginPage() {
 
     const [error, setError] = useState<string | null>(null);
 
-    const onLogin = async (login: LoginData) => {
+    const onLogin = (login: LoginData) => {
         setDisableLogin(true)
         loginUser(login)
-            .then(user => setUser(user))
-            .catch(error => {
-                setDisableLogin(false);
-                console.error(error)
-                setError("Login failed. Check your email address and password and try again.");
-            })
+            .then(user => {
+                if (user !== null) {
+                    setUser(user);
+                } else {
+                    setDisableLogin(false);
+                    console.error(error)
+                    setError("Login failed. Check your email address and password and try again.");
+                }
+            }).catch(setException);
     };
 
     return (

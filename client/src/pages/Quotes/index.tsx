@@ -3,14 +3,19 @@ import {  getQuotes } from "../../api";
 import { useEffect, useState } from "react";
 import { formatDateTime } from "../../formatters";
 import { Quote } from "../../types";
+import { useStore } from "../../store";
+import { shallow } from "zustand/shallow";
 
 export default function Quotes() {
     const [quotes, setQuotes] = useState<Quote[]>([]);
-
+    const [setException] = useStore(
+        (state) => [state.setException],
+        shallow,
+    );
 
     useEffect(() => {
-        getQuotes().then((quotes) => setQuotes(quotes));
-    }, []);
+        getQuotes().then((quotes) => setQuotes(quotes)).catch(setException);
+    }, [setException]);
 
     return (
         <main>

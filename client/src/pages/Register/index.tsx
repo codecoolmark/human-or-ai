@@ -3,12 +3,17 @@ import { registerUser } from "../../api";
 import RegisterForm from "./RegisterForm";
 import { RegisterData } from "../../types";
 import { useNavigate } from "react-router";
+import { useStore } from "../../store";
+import { shallow } from "zustand/shallow";
 
 export default function RegisterPage() {
-    const [registerError, setRegisterError] = useState<string | null>(null);
     const [disableRegistration, setDisableRegistration] = useState(false);
     const [usedEmail, setUsedEmail] = useState<string | null>(null);
     const [usedNickname, setUsedNickname] = useState<string | null>(null);
+    const [setException] = useStore(
+        (state) => [state.setException],
+        shallow,
+    );
     const navigate = useNavigate();
 
     const onRegister = async (data: RegisterData) => {
@@ -25,18 +30,11 @@ export default function RegisterPage() {
                 }
                 
             })
-            .catch(error => {
-                console.error(error);
-                setRegisterError("Couldn't create account. Please try again later.")
-            });
+            .catch(setException);
     };
 
     return (
         <main>
-            {registerError && (
-                <p className="error">{registerError}</p>
-            )}
-
             <h1>Register a new Account</h1>
 
             <RegisterForm

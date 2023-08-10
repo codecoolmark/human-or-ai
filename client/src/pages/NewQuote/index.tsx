@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { createQuote } from "../../api";
 import { useNavigate } from "react-router";
+import { useStore } from "../../store";
+import { shallow } from "zustand/shallow";
 
 function toISO(dateTime: string): string {
     const date = new Date(dateTime);
@@ -14,6 +16,10 @@ export default function NewQuote() {
     const [text, setText] = useState("");
     const [isReal, setReal] = useState(false);
     const [expires, setExpires] = useState(() => getTomorrow());
+    const [setException] = useStore(
+        (state) => [state.setException],
+        shallow,
+    );
 
     const onSubmit = (event: React.FormEvent) => {
         event.preventDefault();
@@ -26,7 +32,7 @@ export default function NewQuote() {
             text,
             isReal,
             expires: toISO(expires),
-        }).then(() => navigate("/quotes"));
+        }).then(() => navigate("/quotes")).catch(setException);
     };
 
     const isValid = Boolean(text && expires);
