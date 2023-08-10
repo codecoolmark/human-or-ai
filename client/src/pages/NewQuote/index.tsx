@@ -73,14 +73,25 @@ export default function NewQuote() {
                 <div className="button-panel">
                     <button type="button" disabled={generateAiButtonDisabled} onClick={onGenerateAiButtonOnClick}>Generate AI Text</button>
                 </div>
-                <label>
-                    Human
-                    <input
-                        type="checkbox"
+                <fieldset className="radio">
+                    <label><span className="human">Human</span> 
+                        <input
+                        type="radio"
+                        name="isReal"
+                        value={"human"}
                         checked={isReal}
-                        onChange={(event) => setReal(event.target.checked)}
-                    />
-                </label>
+                        onChange={(event) => setReal(event.target.value === "human")}/>
+                    </label>
+                    <label><span className="ai">Ai</span> 
+                        <input
+                        type="radio"
+                        name="isReal"
+                        value={"ai"}
+                        checked={!isReal}
+                        onChange={(event) => setReal(event.target.value === "human")}/>
+                    </label>
+                    
+                </fieldset>
                 <label>
                     Expires
                     <ValidatedInput inputType="datetime-local" 

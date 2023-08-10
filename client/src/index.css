@@ -80,6 +80,22 @@ form label {
     display: block;
 }
 
+form fieldset.radio {
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+}
+
+form fieldset.radio label {
+    display: initial;
+}
+
+form fieldset.radio input {
+    display: initial;
+    width: initial;
+    vertical-align: unset;
+}
+
 form input, textarea {
     vertical-align: top;
     width: 100%;
