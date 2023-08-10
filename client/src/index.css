@@ -80,7 +80,7 @@ form label {
     display: block;
 }
 
-form input {
+form input, textarea {
     vertical-align: top;
     width: 100%;
     padding: calc(var(--padding) / 2);

@@ -53,3 +53,7 @@ export type Result<T> =
           value: null;
           error: string;
       };
+
+export interface GeneratedQuote {
+    quote: string;
+}

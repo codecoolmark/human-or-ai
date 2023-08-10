@@ -7,6 +7,7 @@ import {
     GetSessionResponse,
     Vote,
     VoteAndQuoteText,
+    GeneratedQuote,
 } from "./types";
 
 const server = new URL(import.meta.env.VITE_SERVER_URL);
@@ -90,4 +91,10 @@ export function quote(): Promise<Quote> {
     return fetchJson("/quote", {
         method: "POST",
     });
+}
+
+export function generateQuote(): Promise<GeneratedQuote> {
+    return fetchJson("/quotes/generate", {
+        method: "POST"
+    })
 }

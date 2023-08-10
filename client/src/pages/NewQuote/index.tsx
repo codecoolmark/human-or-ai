@@ -1,19 +1,37 @@
 import { useState } from "react";
 import { createQuote } from "../../api";
 import { useNavigate } from "react-router";
+import { generateQuote } from "../../api";
+import ValidatedInput from "../../components/ValidatedInput";
 
 function toISO(dateTime: string): string {
     const date = new Date(dateTime);
     return date.toISOString();
 }
 
+
+function datetimeLocal(date: Date): string {
+    const yearPart = date.getFullYear();
+    const monthPart = (date.getMonth() + 1).toString().padStart(2, '0');
+    const datePart = (date.getDate()).toString().padStart(2, '0');
+    const hoursPart = date.getHours().toString().padStart(2, '0');
+    const minutePart = date.getMinutes().toString().padStart(2, '0');
+
+    return `${yearPart}-${monthPart}-${datePart}T${hoursPart}:${minutePart}`;
+}
+
 export default function NewQuote() {
 
     const navigate = useNavigate();
 
-    const [text, setText] = useState("");
-    const [isReal, setReal] = useState(false);
-    const [expires, setExpires] = useState(() => getTomorrow());
+    const [text, setText] = useState<string>("");
+    const [isReal, setReal] = useState<boolean>(true);
+    const [expires, setExpires] = useState<string>(() => {
+        const date = new Date();
+        date.setDate(date.getDate() + 1);
+        return datetimeLocal(date);
+    });
+    const [generateAiButtonDisabled, setGenerateAiButtonDisabled] = useState<boolean>(false);
 
     const onSubmit = (event: React.FormEvent) => {
         event.preventDefault();
@@ -29,6 +47,14 @@ export default function NewQuote() {
         }).then(() => navigate("/quotes"));
     };
 
+    const onGenerateAiButtonOnClick = async () => {
+        setGenerateAiButtonDisabled(true);
+        const generatedQuote = await generateQuote();
+        setText(generatedQuote.quote);
+        setReal(false);
+        setGenerateAiButtonDisabled(false);
+    };
+
     const isValid = Boolean(text && expires);
 
     return (
@@ -36,16 +62,19 @@ export default function NewQuote() {
             <h1>Add a new quote</h1>
             <form onSubmit={onSubmit}>
                 <label>
-                    Text{" "}
-                    <input
-                        type="text"
-                        maxLength={1024}
+                    Text
+                    <ValidatedInput 
+                        inputType="textarea" 
+                        onValidInput={setText} 
                         value={text}
-                        onChange={(event) => setText(event.target.value)}
-                    />
+                        validateInput={input => input !== "" ? null : "Please put in a quote."}
+                        rows={5}/>
                 </label>
+                <div className="button-panel">
+                    <button type="button" disabled={generateAiButtonDisabled} onClick={onGenerateAiButtonOnClick}>Generate AI Text</button>
+                </div>
                 <label>
-                    Human{" "}
+                    Human
                     <input
                         type="checkbox"
                         checked={isReal}
@@ -53,12 +82,11 @@ export default function NewQuote() {
                     />
                 </label>
                 <label>
-                    Expires{" "}
-                    <input
-                        type="datetime-local"
+                    Expires
+                    <ValidatedInput inputType="datetime-local" 
+                        onValidInput={setExpires} 
                         value={expires}
-                        onChange={(event) => setExpires(event.target.value)}
-                    />
+                        validateInput={value => value !== "" ? null : "Please select when this quote expires"}/>
                 </label>
                 <button type="submit" disabled={!isValid}>
                     Create new quote
@@ -66,13 +94,4 @@ export default function NewQuote() {
             </form>
         </main>
     );
-}
-
-function getTomorrow(): string {
-    const now = new Date();
-    now.setDate(now.getDate() + 1);
-    return now
-        .toISOString()
-        .replace(/T\d+:\d+:\d+/, "T00:00:00")
-        .replace(/\.\d+Z$/, "");
 }
