@@ -161,3 +161,7 @@ figure {
 .input-container.error .error-message {
     color: var(--accent-color);
 }
+
+.error {
+    color: var(--accent-color);
+}

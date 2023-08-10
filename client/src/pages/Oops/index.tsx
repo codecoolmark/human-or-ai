@@ -12,7 +12,7 @@ export default function Oops({ exception }: OopsProbs) {
 
     return <main>
         <h1>Oopy something went wrong</h1>
-        <p>Reload the page and try again.</p>
+        <p className="error">Reload the page and try again.</p>
         {message && 
             <details>
                 <summary>Detailed error message</summary>
