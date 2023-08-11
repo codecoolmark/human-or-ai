@@ -32,7 +32,7 @@ public class VotesController {
     }
 
     @PostMapping("/votes")
-    public Vote postVote(@RequestBody PostVoteRequest voteRequest, Authentication authentication) {
+    public Vote postVotes(@RequestBody PostVoteRequest voteRequest, Authentication authentication) {
         var quote = quotesRepository.findById(voteRequest.getQuoteId()).orElseThrow();
         var user = usersRepository.findByEmail(authentication.getName()).orElseThrow();
         return this.votesService.createVote(quote, user, voteRequest.isReal());
