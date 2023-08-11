@@ -21,16 +21,16 @@ export default function RegisterPage() {
         registerUser(data)
             .then((response) => {
                 setDisableRegistration(false);
-                if (response.isUsernameExists === true) {
-                    setUsedNickname(data.nickname);
-                } else if (response.isEmailExists === true) {
-                    setUsedEmail(data.email);
-                } else {
-                    navigate("/");
-                }
-                
-            })
-            .catch(setException);
+                response
+                    .useA(() => navigate("/"))
+                    .useB(errors => {
+                        if (errors.isUsernameExists) {
+                            setUsedNickname(data.nickname);
+                        } else if (errors.isEmailExists) {
+                            setUsedEmail(data.email);
+                        }
+                    });
+            }).catch(setException);
     };
 
     return (

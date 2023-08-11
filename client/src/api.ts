@@ -1,3 +1,4 @@
+import { Either } from "./Either";
 import {
   LoginData,
   PostVoteRequest,
@@ -43,7 +44,7 @@ function fetchVoid(endpoint: string, options: RequestInit = {}) {
 
 export async function registerUser(
   user: RegisterData
-): Promise<GetSessionResponse & RegisterErrors> {
+): Promise<Either<GetSessionResponse, RegisterErrors>> {
   const response = await fetch(new URL("/users", server), {
     credentials: "include",
     method: "POST",
@@ -53,10 +54,13 @@ export async function registerUser(
     body: JSON.stringify(user),
   });
 
-  const isValidResponse = response.ok || (response.status >= 400 && response.status <= 499);
 
-  if (isValidResponse) {
-    return await response.json();
+  if (response.ok) {
+    const user = await response.json();
+    return new Either({ a: user })
+  } else if (response.status >= 400 && response.status <= 499) {
+    const errors = await response.json()
+    return new Either({ b: errors })
   }
 
   throw new ResponseError("Request failed", response);
