@@ -99,9 +99,11 @@ export default function NewQuote() {
                         value={expires}
                         validateInput={value => value !== "" ? null : "Please select when this quote expires"}/>
                 </label>
-                <button type="submit" disabled={!isValid}>
-                    Create new quote
-                </button>
+                <div className="button-panel">
+                    <button type="submit" disabled={!isValid}>
+                        Create new quote
+                    </button>
+                </div>
             </form>
         </main>
     );

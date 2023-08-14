@@ -106,6 +106,10 @@ form .button-panel {
     padding-top: var(--padding);
 }
 
+form .button-panel:not(:last-child) {
+    padding-bottom: var(--padding);
+}
+
 figure {
     padding: 0;
     margin: 0;
