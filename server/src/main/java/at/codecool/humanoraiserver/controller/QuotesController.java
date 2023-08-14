@@ -1,7 +1,7 @@
 package at.codecool.humanoraiserver.controller;
 
 import at.codecool.humanoraiserver.model.Quote;
-import at.codecool.humanoraiserver.quotegenerator.QuoteGenerator;
+import at.codecool.humanoraiserver.services.QuoteGenerator;
 import at.codecool.humanoraiserver.services.QuotesService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

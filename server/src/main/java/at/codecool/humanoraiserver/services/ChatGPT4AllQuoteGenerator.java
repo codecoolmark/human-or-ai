@@ -1,4 +1,4 @@
-package at.codecool.humanoraiserver.quotegenerator;
+package at.codecool.humanoraiserver.services;
 
 import com.hexadevlabs.gpt4all.LLModel;
 import org.slf4j.Logger;
