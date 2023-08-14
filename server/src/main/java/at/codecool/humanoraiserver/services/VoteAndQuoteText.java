@@ -12,18 +12,12 @@ public class VoteAndQuoteText {
     private final Instant created;
     private final Optional<Boolean> isCorrect;
 
-    public VoteAndQuoteText(Vote vote, Quote quote) {
-        Instant now = Instant.now();
-        Instant expires = quote.getExpires();
-
-        int expiresDiff = expires.compareTo(now);
-        boolean shouldReveal = expiresDiff <= 0;
-
+    public VoteAndQuoteText(Vote vote, Quote quote, Instant now) {
         this.text = quote.getText();
         this.isReal = vote.getReal();
         this.created = vote.getCreated();
 
-        if (shouldReveal) {
+        if (quote.getExpires().isBefore(now)) {
             this.isCorrect = Optional.of(this.isReal == quote.isReal());
         } else {
             this.isCorrect = Optional.empty();

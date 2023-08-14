@@ -16,7 +16,7 @@ public class Vote {
     private Long quoteId;
     private Instant created;
 
-    private Boolean isReal;
+    private boolean isReal;
 
     private Long userId;
 
