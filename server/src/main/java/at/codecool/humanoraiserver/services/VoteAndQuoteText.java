@@ -24,6 +24,10 @@ public class VoteAndQuoteText {
         }
     }
 
+    public VoteAndQuoteText(Vote vote, Quote quote) {
+        this(vote, quote, Instant.now());
+    }
+
     public String getText() {
         return text;
     }

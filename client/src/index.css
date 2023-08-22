@@ -3,7 +3,9 @@
     --primary-color: rgba(0, 0, 0, 0.80);
     --secondary-color: rgba(233, 233, 237, 1.0); 
     --accent-color: rgba(250, 20, 20, 0.98);
+    --success-color: rgba(49, 219, 36, 1.0);
     --text-color: var(--primary-color);
+    --outline-offset: 0.01rem;
 }
 
 * {
@@ -102,6 +104,12 @@ form input, textarea {
     padding: calc(var(--padding) / 2);
 }
 
+form input:focus {
+    outline-style: solid;
+    outline-width: medium;
+    outline-offset: var(--outline-offset);
+}
+
 form .button-panel {
     padding-top: var(--padding);
 }
@@ -160,4 +168,20 @@ figure {
     padding-top: var(--padding);
     display: flex;
     justify-content: end;
+}
+
+.input-container.valid .validated-input:focus {
+    outline-color: var(--success-color);
+}
+
+.input-container.error .validated-input:focus {
+    outline-color: var(--accent-color);
+}
+
+.input-container.error .error-message {
+    color: var(--accent-color);
+}
+
+.error {
+    color: var(--accent-color);
 }

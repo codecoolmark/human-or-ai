@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import InputAndValidationMessage from "./InputAndValidationMessage";
 
 interface ValidatedInputProps {
     inputType: string;
@@ -6,62 +7,51 @@ interface ValidatedInputProps {
     validateInput: (input: string) => string | null;
     disabled?: boolean;
     rows?: number;
-    value?: string
+    overwriteValue?: string
 }
 
 export default function ValidatedInput({
     inputType,
     onValidInput: onValidInput,
     validateInput,
-    value = "",
+    overwriteValue,
+    disabled = false,
     ...attributes
 }: ValidatedInputProps) {
-    const [previousExternalValue, setPreviousExternalValue] = useState<string>(value)
-    const [inputValue, setInputValue] = useState<string>(value);
-    const [showValidationMessage, setShowValidationMessage] = useState(false);
+    
+    const [previousOverwriteValue, setPreviousOverwriteValue] = useState<string | undefined>(overwriteValue)
+    const [inputValue, setInputValue] = useState<string>("");
     const [validationMessage, setValidationMessage] = useState<string | null>(
         null,
     );
 
-    if (value !== previousExternalValue) {
-        setPreviousExternalValue(value);
-        setInputValue(value);
+    if (previousOverwriteValue !== overwriteValue) {
+        setPreviousOverwriteValue(overwriteValue);
+
+        if (overwriteValue !== undefined) {
+            setInputValue(overwriteValue);
+            onValidInput(overwriteValue);
+        }
     }
 
-    const onChangeListener = (event: React.ChangeEvent<HTMLInputElement & HTMLTextAreaElement>) => {
-        const input = event.target.value;
-        const validationMessage = validateInput(input);
+    const validate = () => {
+        const validationMessage = validateInput(inputValue);
         setValidationMessage(validationMessage);
-        setInputValue(input);
-
         if (validationMessage === null) {
-            onValidInput(input);
+            onValidInput(inputValue);
         }
+    }
+
+    const onChangeListener = (input: string) => {
+        setInputValue(input);
+        validate();
     };
 
-    const onBlurListener = () => setShowValidationMessage(true);
-
-    let inputElement = <input
-        type={inputType}
-        onChange={onChangeListener}
-        onBlur={onBlurListener}
-        value={inputValue}
-        {...attributes}/>
-
-    if (inputType === "textarea") {
-        inputElement = <textarea
-            onChange={onChangeListener}
-            onBlur={onBlurListener}
-            value={inputValue}
-            {...attributes}></textarea>
-    }
-
-    return (
-        <div>
-            {inputElement}
-            {showValidationMessage && (
-                <span className="error">{validationMessage}</span>
-            )}
-        </div>
-    );
+    return <InputAndValidationMessage 
+        inputType={inputType} 
+        disabled={disabled}
+        value={inputValue} 
+        processInput={onChangeListener} 
+        validationMessage={validationMessage}
+        {...attributes} />
 }

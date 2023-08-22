@@ -57,3 +57,19 @@ export type Result<T> =
 export interface GeneratedQuote {
     quote: string;
 }
+
+export class ResponseError implements Error {
+    name = "RequestError";
+    message: string;
+    response: Response;
+
+    constructor(message: string, response: Response) {
+        this.message = message;
+        this.response = response;
+    }
+}
+
+export interface RegisterErrors {
+    isUsernameExists: boolean
+    isEmailExists: boolean
+}

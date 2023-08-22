@@ -2,14 +2,14 @@ import { Quote } from "../../types";
 
 interface QuoteContainerProps {
     quote: Quote;
-    onNewQuote: () => void;
+    onNextQuote: () => void;
     onHuman: (quote: Quote) => void;
     onAi: (quote: Quote) => void;
 }
 
 export default function QuoteContainer({
     quote,
-    onNewQuote,
+    onNextQuote: onNextQuote,
     onHuman,
     onAi,
 }: QuoteContainerProps) {
@@ -27,7 +27,7 @@ export default function QuoteContainer({
                 </button>
             </div>
             <div className="next-quote-panel">
-                <button type="button" onClick={() => onNewQuote()}>
+                <button type="button" onClick={() => onNextQuote()}>
                     Next quote
                 </button>
             </div>

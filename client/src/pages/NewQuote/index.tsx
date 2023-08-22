@@ -3,12 +3,13 @@ import { createQuote } from "../../api";
 import { useNavigate } from "react-router";
 import { generateQuote } from "../../api";
 import ValidatedInput from "../../components/ValidatedInput";
+import { useStore } from "../../store";
+import { shallow } from "zustand/shallow";
 
 function toISO(dateTime: string): string {
     const date = new Date(dateTime);
     return date.toISOString();
 }
-
 
 function datetimeLocal(date: Date): string {
     const yearPart = date.getFullYear();
@@ -25,6 +26,7 @@ export default function NewQuote() {
     const navigate = useNavigate();
 
     const [text, setText] = useState<string>("");
+    const [aiText, setAiText] = useState<string | undefined>();
     const [isReal, setReal] = useState<boolean>(true);
     const [expires, setExpires] = useState<string>(() => {
         const date = new Date();
@@ -32,6 +34,11 @@ export default function NewQuote() {
         return datetimeLocal(date);
     });
     const [generateAiButtonDisabled, setGenerateAiButtonDisabled] = useState<boolean>(false);
+
+    const [setException] = useStore(
+        (state) => [state.setException],
+        shallow,
+    );
 
     const onSubmit = (event: React.FormEvent) => {
         event.preventDefault();
@@ -44,13 +51,13 @@ export default function NewQuote() {
             text,
             isReal,
             expires: toISO(expires),
-        }).then(() => navigate("/quotes"));
+        }).then(() => navigate("/quotes")).catch(setException);
     };
 
     const onGenerateAiButtonOnClick = async () => {
         setGenerateAiButtonDisabled(true);
         const generatedQuote = await generateQuote();
-        setText(generatedQuote.quote);
+        setAiText(generatedQuote.quote);
         setReal(false);
         setGenerateAiButtonDisabled(false);
     };
@@ -66,7 +73,7 @@ export default function NewQuote() {
                     <ValidatedInput 
                         inputType="textarea" 
                         onValidInput={setText} 
-                        value={text}
+                        overwriteValue={aiText}
                         validateInput={input => input !== "" ? null : "Please put in a quote."}
                         rows={5}/>
                 </label>
@@ -96,7 +103,7 @@ export default function NewQuote() {
                     Expires
                     <ValidatedInput inputType="datetime-local" 
                         onValidInput={setExpires} 
-                        value={expires}
+                        overwriteValue={expires}
                         validateInput={value => value !== "" ? null : "Please select when this quote expires"}/>
                 </label>
                 <div className="button-panel">
