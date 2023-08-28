@@ -19,8 +19,8 @@ export default function ValidatedInput({
     ...attributes
 }: ValidatedInputProps) {
     
-    const [previousOverwriteValue, setPreviousOverwriteValue] = useState<string | undefined>(overwriteValue)
-    const [inputValue, setInputValue] = useState<string>("");
+    const [previousOverwriteValue, setPreviousOverwriteValue] = useState<string | undefined>(overwriteValue);
+    const [inputValue, setInputValue] = useState<string>(overwriteValue ?? "");
     const [validationMessage, setValidationMessage] = useState<string | null>(
         null,
     );
@@ -30,7 +30,6 @@ export default function ValidatedInput({
 
         if (overwriteValue !== undefined) {
             setInputValue(overwriteValue);
-            onValidInput(overwriteValue);
         }
     }
 

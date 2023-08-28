@@ -33,6 +33,7 @@ export default function NewQuote() {
         date.setDate(date.getDate() + 1);
         return datetimeLocal(date);
     });
+
     const [generateAiButtonDisabled, setGenerateAiButtonDisabled] = useState<boolean>(false);
 
     const [setException] = useStore(
@@ -57,6 +58,7 @@ export default function NewQuote() {
     const onGenerateAiButtonOnClick = async () => {
         setGenerateAiButtonDisabled(true);
         const generatedQuote = await generateQuote();
+        setText(generatedQuote.quote);
         setAiText(generatedQuote.quote);
         setReal(false);
         setGenerateAiButtonDisabled(false);
