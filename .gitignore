@@ -1,0 +1,8 @@
+.idea
+/server/src/main/resources/application-*.properties
+/server/target
+.env**
+
+client/dist
+client/node_modules
+
