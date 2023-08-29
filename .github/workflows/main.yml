@@ -1,9 +1,12 @@
 name: 'Run test on commit'
+
 on: 
+  workflow_dispatch:
+  
   push:
     branches:
-      - main
-      - development
+      - 'main'
+      - 'development'
 
 jobs:
   backend:
