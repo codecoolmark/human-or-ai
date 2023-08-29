@@ -14,7 +14,7 @@ export default function Vote() {
 
     const fetchQuote = (setQuote: (quote: Quote) => void, setException: (e: Error) => void) => {
         api.quote()
-            .then((newQuote) => setQuote(newQuote))
+            .then((newQuoteEither) => newQuoteEither.useA(quote => setQuote(quote)))
             .catch(setException);
     };
 
@@ -49,7 +49,7 @@ export default function Vote() {
                     onAi={onAi}
                 />
             ) : (
-                <p>No quote</p>
+                <p>No quote available</p>
             )}
         </main>
     );

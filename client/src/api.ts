@@ -115,10 +115,22 @@ export function createVote(vote: PostVoteRequest): Promise<Vote> {
   });
 }
 
-export function quote(): Promise<Quote> {
-  return fetchJson("/quote", {
+export async function quote(): Promise<Either<Quote, null>> {
+  const response = await fetch(new URL("/quote", server), {
+    credentials: "include",
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    }
   });
+
+  if (response.ok) {
+    return new Either({ a: await response.json() });
+  } else if (response.status === 404) {
+    return new Either({ b: null });
+  }
+
+  throw new ResponseError("Request failed", response);
 }
 
 export function generateQuote(): Promise<GeneratedQuote> {
