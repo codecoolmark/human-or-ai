@@ -59,7 +59,7 @@ export default function RegisterForm({ onSubmit: onSubmitProp, disabled, usedEma
     const onEmailChange = (input: string) => {
         const validationResult = validateEmailInput(input)
         setEmailValidationMessage(validationResult);
-        if (validationResult != null) {
+        if (validationResult === null) {
             setEmail(input);
         }
     }
@@ -79,7 +79,7 @@ export default function RegisterForm({ onSubmit: onSubmitProp, disabled, usedEma
     const onNicknameChange = (input: string) => {
         const validationResult = validateNicknameInput(input);
         setNicknameValidationMessage(validationResult);
-        if (validationResult == null) {
+        if (validationResult === null) {
             setNickname(input);
         }
     }
