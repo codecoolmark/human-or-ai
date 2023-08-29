@@ -2,7 +2,7 @@ name: 'Run test on commit'
 on: 
   push
 jobs:
-  build-backend:
+  backend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -11,5 +11,7 @@ jobs:
           distribution: adopt
           java-version: '20'
       - run: mvn compile
+        working-directory: ./server
+      - run: mvn test
         working-directory: ./server
     
