@@ -9,8 +9,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: adopt
-          java-version: '19'
-      - run: cd server
+          java-version: '20'
       - run: mvn compile
         working-directory: ./server
     
