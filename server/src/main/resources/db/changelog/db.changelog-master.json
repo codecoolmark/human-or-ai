@@ -1,0 +1,36 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": 1,
+        "author": "codecoolmark",
+        "changes": [
+          {
+            "createTable": {
+              "tableName": "quote",
+              "columns": [{
+                "column": {
+                    "name": "id",
+                    "type": "bigint",
+                    "autoIncrement": true,
+                    "constraints":[{
+                      "primaryKey": true,
+                      "nullable": false
+                    }]
+                  }
+                }, {
+                "column": {
+                  "name": "text",
+                  "type": "text",
+                  "constraints": [{
+                    "nullable": false
+                  }]
+                }
+              }]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
