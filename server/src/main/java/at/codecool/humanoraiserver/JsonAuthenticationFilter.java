@@ -15,10 +15,23 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.io.IOException;
 
+/**
+ * Request filter that reads user credentials (username and password) from a request.
+ * The credentials have to be sent as the request body in the format defined by the {@link PostSessionRequest} class.
+ * Upon receiving credentials the user is authenticated using the applications {@link AuthenticationManager}.
+ */
 public class JsonAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     private final ObjectMapper objectMapper;
 
+    /**
+     * Constructs a new {@link JsonAuthenticationFilter}.
+     *
+     * @param requestMatcher Determines to which request allow log in.
+     * @param objectMapper The object mapper for mapping the request body to an instance of {@link PostSessionRequest}.
+     * @param authenticationManager The authentication manager.
+     * @param rememberMeServices The remember me services.
+     */
     public JsonAuthenticationFilter(RequestMatcher requestMatcher,
                                     ObjectMapper objectMapper,
                                     AuthenticationManager authenticationManager,
@@ -34,7 +47,8 @@ public class JsonAuthenticationFilter extends AbstractAuthenticationProcessingFi
             throws AuthenticationException, IOException {
             var inputStream = request.getInputStream();
             var loginRequest = objectMapper.readValue(inputStream, PostSessionRequest.class);
-            var authentication = new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassword());
+            var authentication = new UsernamePasswordAuthenticationToken(loginRequest.getUserName(),
+                    loginRequest.getPassword());
             return super.getAuthenticationManager().authenticate(authentication);
     }
 
