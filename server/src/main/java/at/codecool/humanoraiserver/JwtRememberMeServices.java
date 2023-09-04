@@ -11,6 +11,11 @@ import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 
+/**
+ * JWT based remember me services. This class allows a request to be authenticated based on a JWT stored in a cookie.
+ * The name of the cookie can be configured using the {@code cookies.authcookie.name} setting. If a request is sent with
+ * this cookie the token is read from the cookie and validated using the {@link JwtAuthenticationProvider}.
+ */
 @Component
 public class JwtRememberMeServices implements RememberMeServices {
     private final String authCookieName;
@@ -18,6 +23,13 @@ public class JwtRememberMeServices implements RememberMeServices {
 
     private final Tokens tokens;
 
+
+    /**
+     * Creates a new service.
+     * @param authCookieName The name of the cookie that contains the authentication token.
+     * @param jwtAuthenticationProvider The {@link JwtAuthenticationProvider} used to validate the token.
+     * @param tokens Utility class for generating the tokens.
+     */
     public JwtRememberMeServices(@Value("${cookies.authcookie.name}") String authCookieName,
                                  JwtAuthenticationProvider jwtAuthenticationProvider,
                                  Tokens tokens) {

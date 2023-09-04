@@ -7,19 +7,32 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.security.auth.Subject;
 import java.util.Collection;
 
+/**
+ * Authentication that is based on a JWT.
+ */
 public class JwtTokenAuthentication implements Authentication {
 
     private final String token;
 
-    private UserDetails userDetails;
+    private final UserDetails userDetails;
 
     private boolean isAuthenticated;
 
+    /**
+     * Creates a new authentication with only a token. This implies that the token is not considered valid (yet) and no
+     * user details can be provided.
+     * @param token The token on which the authentication is based.
+     */
     public JwtTokenAuthentication(String token) {
         this.token = token;
         this.userDetails = null;
     }
 
+    /**
+     * Creates a authentication with a token and user details. This implies that the token is valid.
+     * @param token The token the authentication is based on.
+     * @param userDetails The user details of the authenticated user (may be incomplete.)
+     */
     public JwtTokenAuthentication(String token, UserDetails userDetails) {
         this.token = token;
         this.userDetails = userDetails;

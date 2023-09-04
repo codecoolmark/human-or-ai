@@ -6,11 +6,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
+/**
+ * AuthenticationProvider that authenticates request based on a JWT.
+ */
 @Component
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     private final Tokens tokens;
 
+    /**
+     * Creates a new provider
+     * @param tokens Utility class for generating and validating tokens.
+     */
     public JwtAuthenticationProvider(Tokens tokens) {
         this.tokens = tokens;
     }
