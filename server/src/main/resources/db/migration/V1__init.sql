@@ -1,1 +1,0 @@
-create table quote (id bigint primary key generated always as identity, "text" text)

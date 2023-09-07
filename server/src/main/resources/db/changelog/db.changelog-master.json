@@ -31,6 +31,248 @@
           }
         ]
       }
+    }, {
+      "changeSet": {
+        "id": 2,
+        "author": "codecoolmark",
+        "changes": [{
+            "addColumn": {
+              "tableName": "quote",
+              "columns": [{
+                "column": {
+                  "name": "is_real",
+                  "type": "boolean",
+                  "constraints": [{
+                    "nullable": false
+                  }]
+                }
+              }, {
+                "column": {
+                  "name": "expires",
+                  "type": "timestamp",
+                  "constraints": [{
+                    "nullable": false
+                  }]
+                }
+              }]
+            }
+          }
+        ]
+      }
+    },{
+      "changeSet": {
+        "id": 3,
+        "author": "codecoolmark",
+        "changes": [{
+          "createTable": {
+            "tableName": "user",
+            "columns": [{
+                "column": {
+                  "name": "id",
+                  "type": "bigint",
+                  "autoIncrement": true,
+                  "constraints":[{
+                    "primaryKey": true,
+                    "nullable": false
+                  }]
+                }
+              }, {
+                "column": {
+                  "name": "email",
+                  "type": "text",
+                  "constraints":[{
+                    "unique": true,
+                    "nullable": false
+                  }]
+               }
+              }, {
+                "column": {
+                  "name": "nickname",
+                  "type": "text",
+                  "constraints":[{
+                    "nullable": false
+                  }]
+                }
+              }, {
+                "column": {
+                  "name": "password_hash",
+                  "type": "text",
+                  "constraints":[{
+                    "nullable": false
+                  }]
+                }
+              }]
+            }
+        }]
+      }
+    }, {
+      "changeSet": {
+        "id": 4,
+        "author": "codecoolmark",
+        "changes": [{
+          "createTable": {
+            "tableName": "vote",
+            "columns": [{
+              "column": {
+                "name": "id",
+                "type": "bigint",
+                "autoIncrement": true,
+                "constraints":[{
+                  "primaryKey": true,
+                  "nullable": false
+                }]
+              }
+            }, {
+              "column": {
+                "name": "quote_id",
+                "type": "bigint",
+                "constraints":[{
+                  "nullable": false,
+                  "references": {
+                    "referencedTableName": "quote",
+                    "referencedColumnNames": ["id"]
+                  }
+                }]
+              }
+            }, {
+              "column": {
+                "name": "is_real",
+                "type": "boolean",
+                "constraints":[{
+                  "nullable": false
+                }]
+              }
+            }, {
+              "column": {
+                "name": "created",
+                "type": "timestamp",
+                "constraints":[{
+                  "nullable": false
+                }]
+              }
+            }]
+          }
+        }]
+      }
+    }, {
+      "changeSet": {
+        "id": 5,
+        "author": "codecoolmark",
+        "changes": [{
+          "addColumn": {
+            "tableName": "vote",
+            "columns": [{
+              "column":  {
+                "name": "user_id",
+                "type": "bigint",
+                "constraints":[{
+                  "nullable": false,
+                  "references": {
+                    "referencedTableName": "user",
+                    "referencedColumnNames": ["id"]
+                  }
+                }]
+              }
+            }]
+          }
+        }]
+      }
+    }, {
+      "changeSet": {
+        "id": 6,
+        "author": "codecoolmark",
+        "changes": [{
+          "addColumn": {
+            "tableName": "user",
+            "columns": [{
+              "column": {
+                "name": "quote_seed",
+                "type": "bigint",
+                "valueComputed": "random()",
+                "constraints":[{
+                  "nullable": false
+                }]
+              }
+            }]
+          }
+        }]
+      }
+    }, {
+      "changeSet": {
+        "id": 7,
+        "author": "codecoolmark",
+        "changes": [{
+            "addUniqueConstraint": {
+              "tableName": "vote",
+              "name": "unique_quote_id_user_id",
+              "columnNames": "quote_id, user_id"
+            }
+        }]
+      }
+    }, {
+      "changeSet": {
+        "id": 9,
+        "author": "codecoolmark",
+        "changes": [{
+          "addColumn": {
+            "tableName": "user",
+            "columns": [{
+              "column": {
+                "name": "is_admin",
+                "type": "boolean",
+                "value": "false"
+              }
+            }]
+          }
+        }]
+      }
+    }, {
+      "changeSet": {
+        "id": 10,
+        "author": "codecoolmark",
+        "changes": [{
+          "addUniqueConstraint": {
+            "tableName": "user",
+            "columnNames": "nickname"
+          }
+        }]
+      }
+    }, {
+      "changeSet": {
+        "id": 11,
+        "author": "codecoolmark",
+        "changes": [{
+          "insert": {
+            "tableName": "user",
+            "columns": [{
+              "column": {
+                "name": "email",
+                "value": "admin@example.org"
+              }
+            }, {
+              "column": {
+                "name": "nickname",
+                "value": "admn"
+              }
+            }, {
+              "column": {
+                "name": "password_hash",
+                "value": "$argon2id$v=19$m=19456,t=2,p=1$MR0je4Q/2/md8NsL5OeHfQ$9UjNjTEfRGl9fKnQIJVNEGpQde/ZM8/J7WxsElqYu+Q",
+              }
+            }, {
+              "column": {
+                "name": "quote_seed",
+                "value": 5847572137751730130
+              }
+            }, {
+              "column": {
+                "name": "is_admin",
+                "value": true
+              }
+            }]
+          }
+        }]
+      }
     }
   ]
 }

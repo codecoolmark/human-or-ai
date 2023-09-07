@@ -1,1 +1,0 @@
-alter table "user" add constraint user_unique_nickname unique(nickname);
