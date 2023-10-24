@@ -27,7 +27,7 @@ Start server with `dev` profile:
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-Upon starting the server it will automatically create the needed database tables. User accounts can be created using the client's register form. The project automatically creates an admin account with the email `admin@example.org` and the password `IamAdmin`. Quotes can be add by using the admin account.
+Upon starting the server it will automatically create the needed database tables. User accounts can be created using the client's register form. The project automatically creates an admin account with the email `admin@example.org` and the password `IamAdmin`. Quotes can be added using the admin account.
 
 ### Client
 ```
@@ -48,8 +48,8 @@ npm run dev
 
 ### Backend
 
-The backend is structure contained in the `at.codecool.humanorai` packaged. This packaged contains the following sub packages
-- `config` contains config classes (security, cors)
+The backend is contained in the `at.codecool.humanorai` consisting of the following sub packages
+- `config` contains the config classes (security, cors)
 - `controller` contains the controllers for all the endpoints
 - `model` contains all the model classes
 - `repositories` contains all the repositories
