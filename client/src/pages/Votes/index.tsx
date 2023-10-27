@@ -4,6 +4,7 @@ import { formatDateTime } from "../../formatters";
 import { VoteAndQuoteText } from "../../types";
 import { useStore } from "../../store";
 import { shallow } from "zustand/shallow";
+import { Link } from "react-router-dom";
 
 export default function Votes() {
     const [votes, setVotes] = useState<VoteAndQuoteText[]>([]);
@@ -19,7 +20,10 @@ export default function Votes() {
     return (
         <main>
             <h1>Votes</h1>
-            <figure>
+            {votes.length === 0 ? 
+                <p>You have not voted on any quote. <Link to="/vote">Start voting now!</Link></p>
+                :
+                <figure>
                 <table>
                     <thead>
                         <tr>
@@ -55,6 +59,7 @@ export default function Votes() {
                     </tbody>
                 </table>
             </figure>
+        }    
         </main>
     );
 }
