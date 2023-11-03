@@ -1,8 +1,10 @@
 package at.codecool.humanoraiserver.config;
 
+import at.codecool.humanoraiserver.Cookies;
 import at.codecool.humanoraiserver.JsonAuthenticationFilter;
-import at.codecool.humanoraiserver.JwtAuthenticationProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,9 +14,13 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.RememberMeServices;
@@ -34,6 +40,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,
                                                    AuthenticationManager authenticationManager,
+                                                   JwtDecoder jwtDecoder,
                                                    RememberMeServices rememberMeServices) throws Exception {
         return httpSecurity.cors(withDefaults())
                 // we disable CSRF (cross site request forgery) tokens because we rely on CORS to prevent
@@ -53,7 +60,9 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // Set up the remember me functionality. Remember me is the term used by spring for remembering the login
                 // state of a user. (https://docs.spring.io/spring-security/reference/servlet/authentication/rememberme.html)
-                .rememberMe(remember -> remember.rememberMeServices(rememberMeServices))
+                .oauth2ResourceServer(oauth2 ->
+                        oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder)))
+                .rememberMe(rememberMe -> rememberMe.rememberMeServices(rememberMeServices))
                 .build();
     }
 
@@ -61,17 +70,20 @@ public class WebSecurityConfig {
      * Register's our {@link AbstractAuthenticationProcessingFilter} implementation for checking if a user is logged in.
      * @param objectMapper Object mapper for generating json from objects.
      * @param authenticationManager The authentication manager to authenticated users.
-     * @param rememberMeServices The remember me services for managing the login state.
      * @return The authentication filter to use.
      */
     @Bean
     public AbstractAuthenticationProcessingFilter authenticationFilter(ObjectMapper objectMapper,
                                                                        AuthenticationManager authenticationManager,
-                                                                       RememberMeServices rememberMeServices) {
-        return new JsonAuthenticationFilter(new AndRequestMatcher(
+                                                                       Cookies cookies) {
+        var authenticationFilter = new JsonAuthenticationFilter(new AndRequestMatcher(
                 new AntPathRequestMatcher("/session"),
-                request -> HttpMethod.POST.matches(request.getMethod())), objectMapper, authenticationManager,
-                rememberMeServices);
+                request -> HttpMethod.POST.matches(request.getMethod())), objectMapper, authenticationManager);
+
+        authenticationFilter.setAuthenticationSuccessHandler((request, response, authentication) ->
+                cookies.setCookie((UserDetails) authentication.getPrincipal(), response));
+
+        return authenticationFilter;
     }
 
     /**
@@ -103,6 +115,13 @@ public class WebSecurityConfig {
         return new ProviderManager(daoAuthenticationProvider, jwtAuthenticationProvider);
     }
 
+    @Bean
+    JwtAuthenticationProvider jwtAuthenticationProvider(JwtDecoder decoder) {
+        return new JwtAuthenticationProvider(decoder);
+    }
+
+
+
 
     /**
      * @return Our customized @{@link PasswordEncoder}. We do this because the spring security defaults are not secure
@@ -129,5 +148,10 @@ public class WebSecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder(@Value("${tokens.secret}") String secret) {
+        return NimbusJwtDecoder.withSecretKey(Keys.hmacShaKeyFor(secret.getBytes())).build();
     }
 }

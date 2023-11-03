@@ -4,9 +4,10 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
@@ -14,12 +15,12 @@ import org.springframework.web.util.WebUtils;
 /**
  * JWT based remember me services. This class allows a request to be authenticated based on a JWT stored in a cookie.
  * The name of the cookie can be configured using the {@code cookies.authcookie.name} setting. If a request is sent with
- * this cookie the token is read from the cookie and validated using the {@link JwtAuthenticationProvider}.
+ * this cookie the token is read from the cookie and validated using the {@link org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider}.
  */
 @Component
 public class JwtRememberMeServices implements RememberMeServices {
     private final String authCookieName;
-    private final JwtAuthenticationProvider jwtAuthenticationProvider;
+    private final AuthenticationManager authenticationManager;
 
     private final Tokens tokens;
 
@@ -27,14 +28,14 @@ public class JwtRememberMeServices implements RememberMeServices {
     /**
      * Creates a new service.
      * @param authCookieName The name of the cookie that contains the authentication token.
-     * @param jwtAuthenticationProvider The {@link JwtAuthenticationProvider} used to validate the token.
+     * @param authenticationManager The {@link AuthenticationManager} used to validate the token.
      * @param tokens Utility class for generating the tokens.
      */
     public JwtRememberMeServices(@Value("${cookies.authcookie.name}") String authCookieName,
-                                 JwtAuthenticationProvider jwtAuthenticationProvider,
+                                 AuthenticationManager authenticationManager,
                                  Tokens tokens) {
         this.authCookieName = authCookieName;
-        this.jwtAuthenticationProvider = jwtAuthenticationProvider;
+        this.authenticationManager = authenticationManager;
         this.tokens = tokens;
     }
 
@@ -42,26 +43,11 @@ public class JwtRememberMeServices implements RememberMeServices {
     public Authentication autoLogin(HttpServletRequest request, HttpServletResponse response) {
         var cookie = WebUtils.getCookie(request, authCookieName);
 
+        // TODO ms 2023.11.03 regenerate token on every request
         if (cookie != null) {
             var cookieValue = cookie.getValue();
-            var authenticationToken = new JwtTokenAuthentication(cookieValue);
-
-            try {
-                var authentication = jwtAuthenticationProvider.authenticate(authenticationToken);
-
-                if (!authentication.isAuthenticated()) {
-                    invalidateCookie(response);
-                    return null;
-                }
-
-                setAuthCookie(response, authentication);
-
-                return authentication;
-
-            } catch (InsufficientAuthenticationException ae) {
-                invalidateCookie(response);
-                return null;
-            }
+            var authenticationToken = new BearerTokenAuthenticationToken(cookieValue);
+            return authenticationToken;
         }
 
         return null;
@@ -84,7 +70,7 @@ public class JwtRememberMeServices implements RememberMeServices {
     }
 
     private void setAuthCookie(HttpServletResponse response, Authentication authentication) {
-        var user = (UserDetails) authentication.getPrincipal();
+        var user = (Jwt) authentication.getPrincipal();
         response.addCookie(createAuthCookie(tokens.generateToken(user)));
     }
 
