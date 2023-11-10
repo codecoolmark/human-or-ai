@@ -1,5 +1,6 @@
 package at.codecool.humanoraiserver.config;
 
+import at.codecool.humanoraiserver.BearerCookieAuthenticationFilter;
 import at.codecool.humanoraiserver.Cookies;
 import at.codecool.humanoraiserver.JsonAuthenticationFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +24,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.util.matcher.AndRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -41,7 +43,9 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,
                                                    AuthenticationManager authenticationManager,
                                                    JwtDecoder jwtDecoder,
-                                                   RememberMeServices rememberMeServices) throws Exception {
+                                                   RememberMeServices rememberMeServices,
+                                                   BearerCookieAuthenticationFilter bearerCookieAuthenticationFilter,
+                                                   JsonAuthenticationFilter jsonAuthenticationFilter) throws Exception {
         return httpSecurity.cors(withDefaults())
                 // we disable CSRF (cross site request forgery) tokens because we rely on CORS to prevent
                 // cross site request forgery (https://owasp.org/www-community/attacks/csrf#other-http-methods)
@@ -62,7 +66,10 @@ public class WebSecurityConfig {
                 // state of a user. (https://docs.spring.io/spring-security/reference/servlet/authentication/rememberme.html)
                 .oauth2ResourceServer(oauth2 ->
                         oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder)))
-                .rememberMe(rememberMe -> rememberMe.rememberMeServices(rememberMeServices))
+                //.rememberMe(rememberMe -> rememberMe.rememberMeServices(rememberMeServices))
+                .addFilterBefore(bearerCookieAuthenticationFilter, AnonymousAuthenticationFilter.class)
+                // todo ms 2023-11-10 check if this is really necessary
+                .addFilterAfter(jsonAuthenticationFilter, BearerCookieAuthenticationFilter.class)
                 .build();
     }
 

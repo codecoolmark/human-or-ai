@@ -70,8 +70,13 @@ public class JwtRememberMeServices implements RememberMeServices {
     }
 
     private void setAuthCookie(HttpServletResponse response, Authentication authentication) {
-        var user = (Jwt) authentication.getPrincipal();
-        response.addCookie(createAuthCookie(tokens.generateToken(user)));
+        if (authentication.getPrincipal() instanceof Jwt) {
+            var user = (Jwt) authentication.getPrincipal();
+            response.addCookie(createAuthCookie(tokens.generateToken(user)));
+        } else {
+            authentication.getPrincipal();
+        }
+
     }
 
     private Cookie createAuthCookie(String token) {
