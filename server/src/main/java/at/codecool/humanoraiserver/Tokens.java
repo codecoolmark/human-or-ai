@@ -1,7 +1,5 @@
 package at.codecool.humanoraiserver;
 
-import at.codecool.humanoraiserver.services.UserDetailsImpl;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.apache.juli.logging.Log;
@@ -41,7 +39,7 @@ public class Tokens {
                 grantedAuthority.getAuthority().equals("isAdmin"));
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
-                .claim("scope", isAdmin ? List.of("admin") : List.of())
+                .claim("scope", isAdmin ? List.of("ADMIN") : List.of())
                 .setExpiration(Date.from(ChronoUnit.SECONDS.addTo(Instant.now(), this.timeout)))
                 .signWith(this.secret)
                 .compact();
@@ -55,21 +53,5 @@ public class Tokens {
                 .setExpiration(Date.from(ChronoUnit.SECONDS.addTo(Instant.now(), this.timeout)))
                 .signWith(this.secret)
                 .compact();
-    }
-
-    public UserDetails validateToken(String token) {
-        try {
-            var claims = Jwts.parserBuilder()
-                    .setSigningKey(secret)
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-            var username = (String) claims.get("userName");
-            var isAdmin = claims.containsKey("isAdmin") && (Boolean) claims.get("isAdmin");
-            return new UserDetailsImpl(username, token, isAdmin);
-        } catch (JwtException jwtE) {
-            log.debug("Validation of JWT token " + token + " failed.", jwtE);
-            return null;
-        }
     }
 }

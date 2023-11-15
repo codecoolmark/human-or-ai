@@ -56,7 +56,7 @@ public class WebSecurityConfig {
                         // the /session and /users endpoints are used for registration and querying login state
                         .requestMatchers("/session", "/users").permitAll()
                         // the /quotes endpoint should only be reachable for admins
-                        .requestMatchers("/quotes").hasAuthority("isAdmin")
+                        .requestMatchers("/quotes").hasAuthority("SCOPE_ADMIN")
                         // any other request should be authenticated
                         .anyRequest().authenticated())
                 // we don't use any HttpSession's
@@ -67,9 +67,8 @@ public class WebSecurityConfig {
                 .oauth2ResourceServer(oauth2 ->
                         oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder)))
                 //.rememberMe(rememberMe -> rememberMe.rememberMeServices(rememberMeServices))
-                .addFilterBefore(bearerCookieAuthenticationFilter, AnonymousAuthenticationFilter.class)
                 // todo ms 2023-11-10 check if this is really necessary
-                .addFilterAfter(jsonAuthenticationFilter, BearerCookieAuthenticationFilter.class)
+                .addFilterBefore(bearerCookieAuthenticationFilter, AnonymousAuthenticationFilter.class)
                 .build();
     }
 
@@ -80,7 +79,7 @@ public class WebSecurityConfig {
      * @return The authentication filter to use.
      */
     @Bean
-    public AbstractAuthenticationProcessingFilter authenticationFilter(ObjectMapper objectMapper,
+    public JsonAuthenticationFilter authenticationFilter(ObjectMapper objectMapper,
                                                                        AuthenticationManager authenticationManager,
                                                                        Cookies cookies) {
         var authenticationFilter = new JsonAuthenticationFilter(new AndRequestMatcher(
