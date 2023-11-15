@@ -1,31 +1,20 @@
 package at.codecool.humanoraiserver;
 
-import at.codecool.humanoraiserver.services.UserDetailsImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.aspectj.lang.annotation.Before;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.util.WebUtils;
-
 import java.io.IOException;
 
 @Component
 public class BearerCookieAuthenticationFilter extends OncePerRequestFilter {
-
-
-    private final String authCookieName;
 
     private final AuthenticationManager authenticationManager;
 
@@ -33,11 +22,9 @@ public class BearerCookieAuthenticationFilter extends OncePerRequestFilter {
 
     private final Cookies cookies;
 
-    public BearerCookieAuthenticationFilter(@Value("${cookies.authcookie.name}") String authCookieName,
-                                            AuthenticationManager authenticationManager,
+    public BearerCookieAuthenticationFilter(AuthenticationManager authenticationManager,
                                             Tokens tokens,
                                             Cookies cookies) {
-        this.authCookieName = authCookieName;
         this.authenticationManager = authenticationManager;
         this.tokens = tokens;
         this.cookies = cookies;
@@ -45,11 +32,10 @@ public class BearerCookieAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        var cookie = WebUtils.getCookie(request, authCookieName);
+        var tokenOptional = this.cookies.getToken(request);
 
-        if (cookie != null) {
-            var cookieValue = cookie.getValue();
-            var authentication = new BearerTokenAuthenticationToken(cookieValue);
+        tokenOptional.ifPresent(token -> {
+            var authentication = new BearerTokenAuthenticationToken(token);
             var newContext = SecurityContextHolder.createEmptyContext();
 
             try {
@@ -62,8 +48,7 @@ public class BearerCookieAuthenticationFilter extends OncePerRequestFilter {
             } catch (InvalidBearerTokenException e){
                 this.cookies.removeCookie(response);
             }
-
-        }
+        });
 
         filterChain.doFilter(request, response);
 
@@ -76,14 +61,7 @@ public class BearerCookieAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private void setAuthCookie(HttpServletResponse response, Authentication authentication) {
-        if (authentication.getPrincipal() instanceof UserDetailsImpl) {
-            var user = (UserDetails) authentication.getPrincipal();
-            var token = tokens.generateToken(user);
-            this.cookies.addCookie(response, token);
-        } else {
-            var user = (Jwt) authentication.getPrincipal();
-            var token = tokens.generateToken(user);
-            this.cookies.addCookie(response, token);
-        }
+        var token = tokens.generateToken(authentication);
+        this.cookies.addCookie(response, token);
     }
 }

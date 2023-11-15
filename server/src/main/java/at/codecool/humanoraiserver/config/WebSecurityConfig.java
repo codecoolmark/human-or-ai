@@ -3,6 +3,7 @@ package at.codecool.humanoraiserver.config;
 import at.codecool.humanoraiserver.BearerCookieAuthenticationFilter;
 import at.codecool.humanoraiserver.Cookies;
 import at.codecool.humanoraiserver.JsonAuthenticationFilter;
+import at.codecool.humanoraiserver.Tokens;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,13 +79,14 @@ public class WebSecurityConfig {
     @Bean
     public JsonAuthenticationFilter authenticationFilter(ObjectMapper objectMapper,
                                                          AuthenticationManager authenticationManager,
-                                                         Cookies cookies) {
+                                                         Cookies cookies,
+                                                         Tokens tokens) {
         var authenticationFilter = new JsonAuthenticationFilter(new AndRequestMatcher(
                 new AntPathRequestMatcher("/session"),
                 request -> HttpMethod.POST.matches(request.getMethod())), objectMapper, authenticationManager);
 
         authenticationFilter.setAuthenticationSuccessHandler((request, response, authentication) ->
-                cookies.setCookie((UserDetails) authentication.getPrincipal(), response));
+                cookies.addCookie(response, tokens.generateToken(authentication)));
 
         return authenticationFilter;
     }

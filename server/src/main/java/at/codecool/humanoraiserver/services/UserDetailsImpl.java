@@ -29,7 +29,7 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (isAdmin) {
-            return List.of(new SimpleGrantedAuthority("isAdmin"));
+            return List.of(new SimpleGrantedAuthority("ADMIN"));
         }
         return List.of();
     }
