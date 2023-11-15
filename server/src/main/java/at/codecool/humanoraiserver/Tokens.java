@@ -1,36 +1,37 @@
 package at.codecool.humanoraiserver;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.JwsHeader;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
-import java.security.InvalidParameterException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 
 @Component
 public class Tokens {
 
     private final Log log = LogFactory.getLog(Tokens.class);
 
-    private final SecretKey secret;
-
     private final Long timeout;
 
-    public Tokens(@Value("${tokens.secret}") String secret, @Value("${tokens.timeout}") Long timeout) {
-        if (secret.getBytes().length < 32) {
-            throw new InvalidParameterException("Secret needs to be at least 32 bytes long.");
-        }
+    private final JwtEncoder jwtEncoder;
 
-        this.secret = Keys.hmacShaKeyFor(secret.getBytes());
+    private final MacAlgorithm macAlgorithm;
+
+    public Tokens(@Value("${tokens.timeout}") Long timeout,
+                  JwtEncoder jwtEncoder,
+                  @Value("${tokens.macalgorithm}") MacAlgorithm macAlgorithm) {
         this.timeout = timeout;
+        this.jwtEncoder = jwtEncoder;
+        this.macAlgorithm = macAlgorithm;
     }
 
     public String generateToken(Authentication authentication) {
@@ -41,11 +42,13 @@ public class Tokens {
                 .map(authorityName -> authorityName.replace("SCOPE_", ""))
                 .toList();
 
-        return Jwts.builder()
-                .setSubject(name)
-                .claim("scope", scopes)
-                .setExpiration(Date.from(ChronoUnit.SECONDS.addTo(Instant.now(), this.timeout)))
-                .signWith(this.secret)
-                .compact();
+        return jwtEncoder.encode(JwtEncoderParameters.from(
+                JwsHeader.with(this.macAlgorithm)
+                        .build(),
+                JwtClaimsSet.builder()
+                        .subject(name)
+                        .claim("scope", scopes)
+                        .expiresAt(ChronoUnit.SECONDS.addTo(Instant.now(), this.timeout))
+                .build())).getTokenValue();
     }
 }

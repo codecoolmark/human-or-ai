@@ -5,7 +5,7 @@ import at.codecool.humanoraiserver.Cookies;
 import at.codecool.humanoraiserver.JsonAuthenticationFilter;
 import at.codecool.humanoraiserver.Tokens;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.security.Keys;
+import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,12 +16,14 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
@@ -33,6 +35,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.SecretKeySpec;
 import java.util.List;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -40,6 +44,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,
                                                    AuthenticationManager authenticationManager,
@@ -125,9 +130,6 @@ public class WebSecurityConfig {
         return new JwtAuthenticationProvider(decoder);
     }
 
-
-
-
     /**
      * @return Our customized @{@link PasswordEncoder}. We do this because the spring security defaults are not secure,
      * and we follow the recommendations on this <a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html">site</a>.
@@ -144,7 +146,7 @@ public class WebSecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // the only other origins we want to allow are localhost for development purposes
+        // the only other origin we want to allow is localhost for development purposes
         configuration.setAllowedOriginPatterns(List.of("http://localhost**", "http://127.0.0.1**"));
         configuration.setAllowedMethods(List.of("GET", "POST", "DELETE"));
         configuration.setAllowedHeaders(List.of("*"));
@@ -156,7 +158,13 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public JwtDecoder jwtDecoder(@Value("${tokens.secret}") String secret) {
-        return NimbusJwtDecoder.withSecretKey(Keys.hmacShaKeyFor(secret.getBytes())).build();
+    public JwtDecoder jwtDecoder(@Value("${tokens.secret}") String secret, @Value("${tokens.macalgorithm}") MacAlgorithm macAlgorithm) {
+        return NimbusJwtDecoder.withSecretKey(new SecretKeySpec(secret.getBytes(), macAlgorithm.name())).build();
+    }
+
+    @Bean
+    public JwtEncoder jwtEncoder(@Value("${tokens.secret}") String secret, @Value("${tokens.macalgorithm}") MacAlgorithm macAlgorithm) {
+        var immutableSecret = new ImmutableSecret<>(new SecretKeySpec(secret.getBytes(), macAlgorithm.name()));
+        return new NimbusJwtEncoder(immutableSecret);
     }
 }
