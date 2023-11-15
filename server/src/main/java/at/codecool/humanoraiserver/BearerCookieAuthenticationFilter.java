@@ -63,8 +63,8 @@ public class BearerCookieAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
 
-        if (SecurityContextHolder.getContext().getAuthentication() != null && SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
-            // todo ms 2023-11-10 this breaks logout find a fix.
+        if (SecurityContextHolder.getContext().getAuthentication() != null
+                && SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
             setAuthCookie(response, SecurityContextHolder.getContext().getAuthentication());
         } else {
             invalidateCookie(response);
