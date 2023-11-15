@@ -1,9 +1,6 @@
 package at.codecool.humanoraiserver.config;
 
-import at.codecool.humanoraiserver.BearerCookieAuthenticationFilter;
-import at.codecool.humanoraiserver.Cookies;
-import at.codecool.humanoraiserver.JsonAuthenticationFilter;
-import at.codecool.humanoraiserver.Tokens;
+import at.codecool.humanoraiserver.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,14 +25,12 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
-import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.util.matcher.AndRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.List;
 
@@ -49,7 +44,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,
                                                    AuthenticationManager authenticationManager,
                                                    JwtDecoder jwtDecoder,
-                                                   BearerCookieAuthenticationFilter bearerCookieAuthenticationFilter) throws Exception {
+                                                   CookieTokenResolver cookieTokenResolver) throws Exception {
         return httpSecurity.cors(withDefaults())
                 // we disable CSRF (cross site request forgery) tokens because we rely on CORS to prevent
                 // cross site request forgery (https://owasp.org/www-community/attacks/csrf#other-http-methods)
@@ -68,10 +63,10 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // Set up the remember me functionality. Remember me is the term used by spring for remembering the login
                 // state of a user. (https://docs.spring.io/spring-security/reference/servlet/authentication/rememberme.html)
-                .oauth2ResourceServer(oauth2 ->
-                        oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder)))
-                // todo ms 2023-11-10 check if this is really necessary
-                .addFilterBefore(bearerCookieAuthenticationFilter, AnonymousAuthenticationFilter.class)
+                .oauth2ResourceServer(oauth2 -> {
+                        oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder));
+                        oauth2.bearerTokenResolver(cookieTokenResolver);
+                    })
                 .build();
     }
 
