@@ -36,10 +36,10 @@ function fetchVoid(endpoint: string, options: RequestInit = {}) {
     credentials: "include",
     ...options,
   }).then((response) => {
-    if (response.ok) {
-      return response.json();
+    
+    if (!response.ok) {
+      throw new ResponseError("Server returned error response", response); 
     }
-    throw new ResponseError("Server returned error response", response);
   });
 }
 

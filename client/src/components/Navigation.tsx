@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { logoutUser } from "../api";
 import { useStore } from "../store";
 import OnlyUser from "./OnlyUser";
@@ -6,11 +6,12 @@ import OnlyAdmin from "./OnlyAdmin";
 import OnlyAnonymous from "./OnlyAnonymous";
 
 export default function Navigation() {
+    const navigateTo = useNavigate();
     const user = useStore((state) => state.user);
     const clearUser = useStore((state) => state.clearUser);
 
     const onLogout = () => {
-        logoutUser().then(() => clearUser());
+        logoutUser().then(() => clearUser()).then(() => navigateTo("/"));
     };
 
     return (
