@@ -22,6 +22,12 @@ public class Cookies {
         response.addCookie(createAuthCookie(tokens.generateToken(userDetails)));
     }
 
+    public void addCookie(HttpServletResponse response, String token) {
+        var authCookie = new Cookie(authCookieName, token);
+        authCookie.setPath("/");
+        response.addCookie(authCookie);
+    }
+
     private Cookie createAuthCookie(String token) {
         var authCookie = new Cookie(authCookieName, token);
         authCookie.setPath("/");

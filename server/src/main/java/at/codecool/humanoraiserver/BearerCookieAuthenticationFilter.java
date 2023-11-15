@@ -31,12 +31,16 @@ public class BearerCookieAuthenticationFilter extends OncePerRequestFilter {
 
     private final Tokens tokens;
 
+    private final Cookies cookies;
+
     public BearerCookieAuthenticationFilter(@Value("${cookies.authcookie.name}") String authCookieName,
                                             AuthenticationManager authenticationManager,
-                                            Tokens tokens) {
+                                            Tokens tokens,
+                                            Cookies cookies) {
         this.authCookieName = authCookieName;
         this.authenticationManager = authenticationManager;
         this.tokens = tokens;
+        this.cookies = cookies;
     }
 
     @Override
@@ -56,7 +60,7 @@ public class BearerCookieAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.setContext(newContext);
                 }
             } catch (InvalidBearerTokenException e){
-                invalidateCookie(response);
+                this.cookies.removeCookie(response);
             }
 
         }
@@ -67,29 +71,19 @@ public class BearerCookieAuthenticationFilter extends OncePerRequestFilter {
                 && SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
             setAuthCookie(response, SecurityContextHolder.getContext().getAuthentication());
         } else {
-            invalidateCookie(response);
+            this.cookies.removeCookie(response);
         }
-    }
-
-    private void invalidateCookie(HttpServletResponse response) {
-        var cookie = createAuthCookie("");
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
     }
 
     private void setAuthCookie(HttpServletResponse response, Authentication authentication) {
         if (authentication.getPrincipal() instanceof UserDetailsImpl) {
             var user = (UserDetails) authentication.getPrincipal();
-            response.addCookie(createAuthCookie(tokens.generateToken(user)));
+            var token = tokens.generateToken(user);
+            this.cookies.addCookie(response, token);
         } else {
             var user = (Jwt) authentication.getPrincipal();
-            response.addCookie(createAuthCookie(tokens.generateToken(user)));
+            var token = tokens.generateToken(user);
+            this.cookies.addCookie(response, token);
         }
-    }
-
-    private Cookie createAuthCookie(String token) {
-        var authCookie = new Cookie(authCookieName, token);
-        authCookie.setPath("/");
-        return authCookie;
     }
 }
