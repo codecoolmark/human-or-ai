@@ -43,9 +43,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,
                                                    AuthenticationManager authenticationManager,
                                                    JwtDecoder jwtDecoder,
-                                                   RememberMeServices rememberMeServices,
-                                                   BearerCookieAuthenticationFilter bearerCookieAuthenticationFilter,
-                                                   JsonAuthenticationFilter jsonAuthenticationFilter) throws Exception {
+                                                   BearerCookieAuthenticationFilter bearerCookieAuthenticationFilter) throws Exception {
         return httpSecurity.cors(withDefaults())
                 // we disable CSRF (cross site request forgery) tokens because we rely on CORS to prevent
                 // cross site request forgery (https://owasp.org/www-community/attacks/csrf#other-http-methods)
@@ -66,7 +64,6 @@ public class WebSecurityConfig {
                 // state of a user. (https://docs.spring.io/spring-security/reference/servlet/authentication/rememberme.html)
                 .oauth2ResourceServer(oauth2 ->
                         oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder)))
-                //.rememberMe(rememberMe -> rememberMe.rememberMeServices(rememberMeServices))
                 // todo ms 2023-11-10 check if this is really necessary
                 .addFilterBefore(bearerCookieAuthenticationFilter, AnonymousAuthenticationFilter.class)
                 .build();
@@ -80,8 +77,8 @@ public class WebSecurityConfig {
      */
     @Bean
     public JsonAuthenticationFilter authenticationFilter(ObjectMapper objectMapper,
-                                                                       AuthenticationManager authenticationManager,
-                                                                       Cookies cookies) {
+                                                         AuthenticationManager authenticationManager,
+                                                         Cookies cookies) {
         var authenticationFilter = new JsonAuthenticationFilter(new AndRequestMatcher(
                 new AntPathRequestMatcher("/session"),
                 request -> HttpMethod.POST.matches(request.getMethod())), objectMapper, authenticationManager);
@@ -130,7 +127,7 @@ public class WebSecurityConfig {
 
 
     /**
-     * @return Our customized @{@link PasswordEncoder}. We do this because the spring security defaults are not secure
+     * @return Our customized @{@link PasswordEncoder}. We do this because the spring security defaults are not secure,
      * and we follow the recommendations on this <a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html">site</a>.
      */
     @Bean
