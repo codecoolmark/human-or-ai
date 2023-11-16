@@ -10,14 +10,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-public class UpdateCookieAuthenticationFilter extends OncePerRequestFilter {
+public class UpdateCookieFilter extends OncePerRequestFilter {
 
     private final Tokens tokens;
 
     private final Cookies cookies;
 
-    public UpdateCookieAuthenticationFilter(Tokens tokens,
-                                            Cookies cookies) {
+    public UpdateCookieFilter(Tokens tokens,
+                              Cookies cookies) {
         this.tokens = tokens;
         this.cookies = cookies;
     }
