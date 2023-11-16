@@ -31,15 +31,14 @@ function fetchJson(endpoint: string, options: RequestInit = {}) {
   });
 }
 
-function fetchVoid(endpoint: string, options: RequestInit = {}) {
+function fetchVoid(endpoint: string, options: RequestInit = {}): Promise<void> {
   return fetch(new URL(endpoint, server), {
     credentials: "include",
     ...options,
   }).then((response) => {
-    if (response.ok) {
-      return response.json();
+    if (!response.ok) {
+      throw new ResponseError("Server returned error response", response);
     }
-    throw new ResponseError("Server returned error response", response);
   });
 }
 
@@ -137,4 +136,10 @@ export function generateQuote(): Promise<GeneratedQuote> {
     return fetchJson("/quotes/generate", {
         method: "POST"
     })
+}
+
+export function deleteQuote(quoteId: number): Promise<void> {
+  return fetchVoid(`/quotes/${quoteId}`, { 
+    method: "delete",
+  });
 }

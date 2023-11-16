@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import {  getQuotes } from "../../api";
+import * as api from "../../api";
 import { useEffect, useState } from "react";
 import { formatDateTime } from "../../formatters";
 import { Quote } from "../../types";
@@ -13,9 +13,16 @@ export default function Quotes() {
         shallow,
     );
 
+    const loadQuotes = (setQuotes: (e: Quote[]) => void, setException: (e: Error) => void) => api.getQuotes().then((quotes) => setQuotes(quotes)).catch(setException);
+
     useEffect(() => {
-        getQuotes().then((quotes) => setQuotes(quotes)).catch(setException);
+        loadQuotes(setQuotes, setException)
     }, [setException]);
+
+    const deleteQuote = (quoteId: number) => {
+        api.deleteQuote(quoteId)
+            .then(() => loadQuotes(setQuotes, setException));
+    };
 
     return (
         <main>
@@ -36,7 +43,7 @@ export default function Quotes() {
                                 <td>{quote.text}</td>
                                 <td>{quote.isReal ? <span className="human">Human</span> : <span className="ai">Ai</span>}</td>
                                 <td>{formatDateTime(quote.expires)}</td>
-                                <td><button type="button">Delete</button></td>
+                                <td><button type="button" onClick={() => deleteQuote(quote.id)}>Delete</button></td>
                             </tr>
                         ))}
                     </tbody>
