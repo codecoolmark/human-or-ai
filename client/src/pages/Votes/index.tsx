@@ -37,14 +37,12 @@ export default function Votes() {
                         {votes.map((vote, index) => (
                             <tr key={index}>
                                 <td>{vote.text}</td>
-                                <td>
-                                    {vote.isReal ? (
-                                        <span className="human">Human</span>
-                                    ) : (
-                                        <span className="ai">Ai</span>
-                                    )}
-                                </td>
-                                <td>
+                                {vote.isReal ? (
+                                    <td className="human center">Human</td>
+                                ) : (
+                                    <td className="ai center">Ai</td>
+                                )}
+                                <td className="middle">
                                     {vote.isCorrect === null ? (
                                         <span>To be announced...</span>
                                     ) : vote.isCorrect ? (

@@ -41,7 +41,7 @@ export default function Quotes() {
                         {quotes.map((quote, index) => (
                             <tr key={index}>
                                 <td>{quote.text}</td>
-                                <td>{quote.isReal ? <span className="human">Human</span> : <span className="ai">Ai</span>}</td>
+                                {quote.isReal ? <td className="human center">Human</td> : <td className="ai center">Ai</td>}
                                 <td>{formatDateTime(quote.expires)}</td>
                                 <td><button type="button" onClick={() => deleteQuote(quote.id)}>Delete</button></td>
                             </tr>

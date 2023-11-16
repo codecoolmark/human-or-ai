@@ -55,6 +55,7 @@ nav .user-panel > * {
 button {
     font-size: 100%;
     font-family: inherit;
+    line-height: 1.5;
     border: 0;
     padding: calc(var(--padding) / 2);  
     background-color: var(--secondary-color);
@@ -123,6 +124,41 @@ figure {
     margin: 0;
 }
 
+table {
+    border-collapse: collapse;
+}
+
+tr {
+    border-bottom: var(--outline-offset) solid var(--primary-color);
+}
+
+tr td {
+    vertical-align: top;
+    padding-top: 0;
+    padding-left: calc(var(--padding) / 2);
+    padding-right: calc(var(--padding) / 2);
+}
+
+tr td:first-of-type {
+    padding-left: 0;
+}
+
+tr td:last-of-type {
+    padding-right: 0;
+}
+
+.center {
+    text-align: center;
+}
+
+tr td.center {
+    vertical-align: middle;
+}
+
+.middle {
+    vertical-align: middle;
+}
+
 .title {
     font-weight: bold;
     font-size: 200%;
@@ -162,6 +198,16 @@ figure {
     background-color: var(--accent-color);
     color: rgba(0, 0, 0, 1.0);
     text-transform: uppercase;
+}
+
+.inline-block {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+}
+
+.button-like {
+    padding: calc(var(--padding) / 2);
 }
 
 .next-quote-panel {
