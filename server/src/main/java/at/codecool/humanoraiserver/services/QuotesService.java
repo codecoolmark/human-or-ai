@@ -4,6 +4,8 @@ import at.codecool.humanoraiserver.model.Quote;
 import at.codecool.humanoraiserver.model.User;
 import at.codecool.humanoraiserver.repositories.QuotesRepository;
 import at.codecool.humanoraiserver.repositories.UsersRepository;
+import at.codecool.humanoraiserver.repositories.VotesRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,9 +19,14 @@ public class QuotesService {
 
     private final UsersRepository usersRepository;
 
-    public QuotesService(QuotesRepository quotesServices, UsersRepository usersRepository) {
+    private final VotesRepository votesRepository;
+
+    public QuotesService(QuotesRepository quotesServices,
+                         UsersRepository usersRepository,
+                         VotesRepository votesRepository) {
         this.quotesRepository = quotesServices;
         this.usersRepository = usersRepository;
+        this.votesRepository = votesRepository;
     }
 
     public Collection<Quote> getQuotes() {
@@ -46,5 +53,12 @@ public class QuotesService {
         usersRepository.save(forUser);
 
         return Optional.of(quotes.get(index));
+    }
+
+    @Transactional
+    public void deleteQuoteById(Long quoteId) {
+        var votes = this.votesRepository.findVotesByQuoteId(quoteId);
+        this.votesRepository.deleteAll(votes);
+        this.quotesRepository.deleteById(quoteId);
     }
 }

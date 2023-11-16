@@ -3,10 +3,7 @@ package at.codecool.humanoraiserver.controller;
 import at.codecool.humanoraiserver.model.Quote;
 import at.codecool.humanoraiserver.services.QuoteGenerator;
 import at.codecool.humanoraiserver.services.QuotesService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
@@ -34,5 +31,10 @@ public class QuotesController {
     @PostMapping("/quotes/generate")
     public PostQuotesGenerateResponse postQuoteGenerate() throws InterruptedException {
         return new PostQuotesGenerateResponse(this.quoteGenerator.generateQuote());
+    }
+
+    @DeleteMapping("/quotes/{quoteId}")
+    public void deleteQuote(@PathVariable Long quoteId) {
+        this.quotesService.deleteQuoteById(quoteId);
     }
 }

@@ -15,5 +15,7 @@ select new at.codecool.humanoraiserver.services.VoteAndQuoteText(v, q)
 from Vote v join Quote q on v.quoteId = q.id
 where v.userId = ?#{#user.getId()}
 """)
-    Collection<VoteAndQuoteText> filterVoteAndQuoteTextsForUser(User user);
+    Collection<VoteAndQuoteText> findVoteAndQuoteTextsForUser(User user);
+
+    Iterable<Vote> findVotesByQuoteId(Long quoteId);
 }

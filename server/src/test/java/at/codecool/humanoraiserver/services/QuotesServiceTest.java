@@ -4,6 +4,7 @@ import at.codecool.humanoraiserver.model.Quote;
 import at.codecool.humanoraiserver.model.User;
 import at.codecool.humanoraiserver.repositories.QuotesRepository;
 import at.codecool.humanoraiserver.repositories.UsersRepository;
+import at.codecool.humanoraiserver.repositories.VotesRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +20,8 @@ class QuotesServiceTest {
     public void testNextQuoteForUser() {
         var quotesRepository = mock(QuotesRepository.class);
         var usersRepository = mock(UsersRepository.class);
-        var quoteService = new QuotesService(quotesRepository, usersRepository);
+        var votesRepository = mock(VotesRepository.class);
+        var quoteService = new QuotesService(quotesRepository, usersRepository, votesRepository);
 
         var random = new Random();
         var initialSeed = random.nextLong();

@@ -19,7 +19,7 @@ public class VotesService {
     }
 
     public Collection<VoteAndQuoteText> getVotesForUser(User user) {
-        return voteRepository.filterVoteAndQuoteTextsForUser(user);
+        return voteRepository.findVoteAndQuoteTextsForUser(user);
     }
 
     public Vote createVote(Quote quote, User forUser, boolean isReal) {

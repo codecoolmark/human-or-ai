@@ -27,6 +27,7 @@ export default function Quotes() {
                             <th>Quote</th>
                             <th>Human or AI</th>
                             <th>Expires</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -35,6 +36,7 @@ export default function Quotes() {
                                 <td>{quote.text}</td>
                                 <td>{quote.isReal ? <span className="human">Human</span> : <span className="ai">Ai</span>}</td>
                                 <td>{formatDateTime(quote.expires)}</td>
+                                <td><button type="button">Delete</button></td>
                             </tr>
                         ))}
                     </tbody>
