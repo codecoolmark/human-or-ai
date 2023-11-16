@@ -240,42 +240,6 @@
           }
         }]
       }
-    }, {
-      "changeSet": {
-        "id": 11,
-        "author": "codecoolmark",
-        "changes": [{
-          "insert": {
-            "tableName": "user",
-            "columns": [{
-              "column": {
-                "name": "email",
-                "value": "admin@example.org"
-              }
-            }, {
-              "column": {
-                "name": "nickname",
-                "value": "admn"
-              }
-            }, {
-              "column": {
-                "name": "password_hash",
-                "value": "$argon2id$v=19$m=19456,t=2,p=1$MR0je4Q/2/md8NsL5OeHfQ$9UjNjTEfRGl9fKnQIJVNEGpQde/ZM8/J7WxsElqYu+Q"
-              }
-            }, {
-              "column": {
-                "name": "quote_seed",
-                "value": 5847572137751730130
-              }
-            }, {
-              "column": {
-                "name": "is_admin",
-                "value": true
-              }
-            }]
-          }
-        }]
-      }
     }
   ]
 }

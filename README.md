@@ -27,7 +27,7 @@ Start server with `dev` profile:
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-Upon starting the server it will automatically create the needed database tables. User accounts can be created using the client's register form. The project automatically creates an admin account with the email `admin@example.org` and the password `IamAdmin`. Quotes can be added using the admin account.
+Upon starting the server it will automatically create the needed database tables. New user accounts can be created using the client's register form. The project automatically creates an admin account with the email `admin@example.org` and the password `IamAdmin` and a user account with the email `user@example.org` and the password `IamUser`. New quotes can be added using the admin account.
 
 ### Client
 ```
