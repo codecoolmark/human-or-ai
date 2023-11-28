@@ -1,8 +1,9 @@
 package at.codecool.humanoraiserver.config;
 
-import at.codecool.humanoraiserver.JsonAuthenticationFilter;
-import at.codecool.humanoraiserver.JwtAuthenticationProvider;
+import at.codecool.humanoraiserver.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.jwk.source.ImmutableSecret;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,15 +16,22 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.util.matcher.AndRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import javax.crypto.spec.SecretKeySpec;
 import java.util.List;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -31,10 +39,13 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,
                                                    AuthenticationManager authenticationManager,
-                                                   RememberMeServices rememberMeServices) throws Exception {
+                                                   JwtDecoder jwtDecoder,
+                                                   CookieTokenResolver cookieTokenResolver,
+                                                   UpdateCookieFilter updateCookieFilter) throws Exception {
         return httpSecurity.cors(withDefaults())
                 // we disable CSRF (cross site request forgery) tokens because we rely on CORS to prevent
                 // cross site request forgery (https://owasp.org/www-community/attacks/csrf#other-http-methods)
@@ -45,7 +56,7 @@ public class WebSecurityConfig {
                         // the /session and /users endpoints are used for registration and querying login state
                         .requestMatchers("/session", "/users").permitAll()
                         // the /quotes endpoint should only be reachable for admins
-                        .requestMatchers("/quotes").hasAuthority("isAdmin")
+                        .requestMatchers("/quotes").hasAuthority("SCOPE_ADMIN")
                         // any other request should be authenticated
                         .anyRequest().authenticated())
                 // we don't use any HttpSession's
@@ -53,7 +64,11 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // Set up the remember me functionality. Remember me is the term used by spring for remembering the login
                 // state of a user. (https://docs.spring.io/spring-security/reference/servlet/authentication/rememberme.html)
-                .rememberMe(remember -> remember.rememberMeServices(rememberMeServices))
+                .oauth2ResourceServer(oauth2 -> {
+                        oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder));
+                        oauth2.bearerTokenResolver(cookieTokenResolver);
+                    })
+                .addFilterBefore(updateCookieFilter, BearerTokenAuthenticationFilter.class)
                 .build();
     }
 
@@ -61,17 +76,21 @@ public class WebSecurityConfig {
      * Register's our {@link AbstractAuthenticationProcessingFilter} implementation for checking if a user is logged in.
      * @param objectMapper Object mapper for generating json from objects.
      * @param authenticationManager The authentication manager to authenticated users.
-     * @param rememberMeServices The remember me services for managing the login state.
      * @return The authentication filter to use.
      */
     @Bean
-    public AbstractAuthenticationProcessingFilter authenticationFilter(ObjectMapper objectMapper,
-                                                                       AuthenticationManager authenticationManager,
-                                                                       RememberMeServices rememberMeServices) {
-        return new JsonAuthenticationFilter(new AndRequestMatcher(
+    public JsonAuthenticationFilter authenticationFilter(ObjectMapper objectMapper,
+                                                         AuthenticationManager authenticationManager,
+                                                         Cookies cookies,
+                                                         Tokens tokens) {
+        var authenticationFilter = new JsonAuthenticationFilter(new AndRequestMatcher(
                 new AntPathRequestMatcher("/session"),
-                request -> HttpMethod.POST.matches(request.getMethod())), objectMapper, authenticationManager,
-                rememberMeServices);
+                request -> HttpMethod.POST.matches(request.getMethod())), objectMapper, authenticationManager);
+
+        authenticationFilter.setAuthenticationSuccessHandler((request, response, authentication) ->
+                cookies.addCookie(response, tokens.generateToken(authentication)));
+
+        return authenticationFilter;
     }
 
     /**
@@ -103,9 +122,13 @@ public class WebSecurityConfig {
         return new ProviderManager(daoAuthenticationProvider, jwtAuthenticationProvider);
     }
 
+    @Bean
+    JwtAuthenticationProvider jwtAuthenticationProvider(JwtDecoder decoder) {
+        return new JwtAuthenticationProvider(decoder);
+    }
 
     /**
-     * @return Our customized @{@link PasswordEncoder}. We do this because the spring security defaults are not secure
+     * @return Our customized @{@link PasswordEncoder}. We do this because the spring security defaults are not secure,
      * and we follow the recommendations on this <a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html">site</a>.
      */
     @Bean
@@ -120,7 +143,7 @@ public class WebSecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // the only other origins we want to allow are localhost for development purposes
+        // the only other origin we want to allow is localhost for development purposes
         configuration.setAllowedOriginPatterns(List.of("http://localhost**", "http://127.0.0.1**"));
         configuration.setAllowedMethods(List.of("GET", "POST", "DELETE"));
         configuration.setAllowedHeaders(List.of("*"));
@@ -129,5 +152,16 @@ public class WebSecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder(@Value("${tokens.secret}") String secret, @Value("${tokens.macalgorithm}") MacAlgorithm macAlgorithm) {
+        return NimbusJwtDecoder.withSecretKey(new SecretKeySpec(secret.getBytes(), macAlgorithm.name())).build();
+    }
+
+    @Bean
+    public JwtEncoder jwtEncoder(@Value("${tokens.secret}") String secret, @Value("${tokens.macalgorithm}") MacAlgorithm macAlgorithm) {
+        var immutableSecret = new ImmutableSecret<>(new SecretKeySpec(secret.getBytes(), macAlgorithm.name()));
+        return new NimbusJwtEncoder(immutableSecret);
     }
 }

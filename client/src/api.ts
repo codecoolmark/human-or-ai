@@ -35,9 +35,9 @@ function fetchVoid(endpoint: string, options: RequestInit = {}): Promise<void> {
   return fetch(new URL(endpoint, server), {
     credentials: "include",
     ...options,
-  }).then((response) => {
+  }).then((response) => {    
     if (!response.ok) {
-      throw new ResponseError("Server returned error response", response);
+      throw new ResponseError("Server returned error response", response); 
     }
   });
 }

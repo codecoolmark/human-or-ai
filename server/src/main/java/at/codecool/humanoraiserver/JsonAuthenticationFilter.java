@@ -12,6 +12,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
@@ -30,16 +31,13 @@ public class JsonAuthenticationFilter extends AbstractAuthenticationProcessingFi
      * @param requestMatcher Determines to which request allow log in.
      * @param objectMapper The object mapper for mapping the request body to an instance of {@link PostSessionRequest}.
      * @param authenticationManager The authentication manager.
-     * @param rememberMeServices The remember me services.
      */
     public JsonAuthenticationFilter(RequestMatcher requestMatcher,
                                     ObjectMapper objectMapper,
-                                    AuthenticationManager authenticationManager,
-                                    RememberMeServices rememberMeServices) {
+                                    AuthenticationManager authenticationManager) {
         super(requestMatcher, authenticationManager);
         this.objectMapper = objectMapper;
         super.setAuthenticationSuccessHandler((request, response, authentication) -> {});
-        super.setRememberMeServices(rememberMeServices);
     }
 
     @Override
@@ -49,7 +47,8 @@ public class JsonAuthenticationFilter extends AbstractAuthenticationProcessingFi
             var loginRequest = objectMapper.readValue(inputStream, PostSessionRequest.class);
             var authentication = new UsernamePasswordAuthenticationToken(loginRequest.getUserName(),
                     loginRequest.getPassword());
-            return super.getAuthenticationManager().authenticate(authentication);
+            var authenticatedAuthentication = super.getAuthenticationManager().authenticate(authentication);
+            return authenticatedAuthentication;
     }
 
     @Override
